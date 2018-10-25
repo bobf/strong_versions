@@ -1,0 +1,10 @@
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+AllCops:
+  Exclude:
+    - 'bin/**/*'
