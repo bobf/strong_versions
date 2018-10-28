@@ -12,3 +12,5 @@
 
 *.swp
 *.swo
+
+.byebug_history

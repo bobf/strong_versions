@@ -1,0 +1,4 @@
+en:
+  errors:
+    pessimistic: "Expected pessimistic operator (~>), found: %{operator}"
+    version: "Expected major and minor version (e.g. 1.2), found: %{version}"
