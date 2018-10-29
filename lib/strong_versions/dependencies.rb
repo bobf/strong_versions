@@ -10,7 +10,8 @@ module StrongVersions
     def validate!
       return if validate
 
-      raise StrongVersions::Errors::InvalidVersionError.new(@invalid_gems)
+      raise Bundler::GemspecError,
+            "StrongVersions expectations not met: #{error_message}"
     end
 
     def validate
@@ -18,6 +19,12 @@ module StrongVersions
         @invalid_gems.push(dependency) unless dependency.valid?
       end
       @invalid_gems.empty?
+    end
+
+    def error_message
+      @invalid_gems.map do |invalid_gem|
+        "#{invalid_gem.name}: #{invalid_gem.errors}"
+      end.join(', ')
     end
   end
 end

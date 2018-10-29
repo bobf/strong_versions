@@ -1,9 +1,10 @@
 module StrongVersions
   class Dependency
-    attr_reader :errors
+    attr_reader :name, :errors
 
     def initialize(dependency)
       @dependency = dependency
+      @name = dependency.name
       @errors = []
 
       versions.each do |operator, version|

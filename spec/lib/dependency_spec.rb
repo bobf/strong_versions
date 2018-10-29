@@ -1,7 +1,7 @@
 RSpec.describe StrongVersions::Dependency do
   let(:requirements) { ['~> 1.0'] }
   let(:raw_dependency) do
-    double('raw dependency', requirements_list: requirements)
+    double('raw dependency', name: 'test_gem', requirements_list: requirements)
   end
 
   let(:dependency) { described_class.new(raw_dependency) }
@@ -9,6 +9,7 @@ RSpec.describe StrongVersions::Dependency do
   subject { dependency }
 
   it { is_expected.to be_a described_class }
+  its(:name) { is_expected.to eql 'test_gem' }
 
   describe '#valid?, #errors' do
     context '(default) valid requirements' do

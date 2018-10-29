@@ -5,7 +5,6 @@ require 'i18n'
 require 'strong_versions/version'
 require 'strong_versions/dependency'
 require 'strong_versions/dependencies'
-require 'strong_versions/errors'
 
 I18n.config.available_locales = :en
 I18n.load_path += Dir[

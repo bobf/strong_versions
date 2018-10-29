@@ -1,10 +1,10 @@
 RSpec.describe StrongVersions::Dependencies do
   let(:requirements) { ['~> 1.0'] }
-  let(:gem_dependency) do
-    double('gem_dependency', requirements_list: requirements)
+  let(:raw_dependency) do
+    double('raw dependency', name: 'test_gem', requirements_list: requirements)
   end
 
-  let(:gem_dependencies) { [gem_dependency] }
+  let(:gem_dependencies) { [raw_dependency] }
   let(:dependencies) { described_class.new(gem_dependencies) }
 
   subject { dependencies }
@@ -35,7 +35,7 @@ RSpec.describe StrongVersions::Dependencies do
     context 'invalid requirements' do
       let(:requirements) { ['>= 1.0.1'] }
       it do
-        is_expected.to raise_error StrongVersions::Errors::InvalidVersionError
+        is_expected.to raise_error Bundler::GemspecError
       end
     end
   end
