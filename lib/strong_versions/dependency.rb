@@ -8,6 +8,7 @@ module StrongVersions
       @dependency = dependency
       @name = dependency.name
       @errors = []
+      @pessimistic = false
 
       versions.each do |operator, version|
         validate_version(operator, version)
@@ -38,19 +39,49 @@ module StrongVersions
     end
 
     def validate_version(operator, version)
-      if operator != '~>'
-        @errors << I18n.t('errors.pessimistic', operator: operator)
-      end
+      return if any_valid?
 
+      check_pessimistic(operator)
+      check_valid_version(version)
+    end
+
+    def check_pessimistic(operator)
+      return if pessimistic?(operator)
+
+      @errors << I18n.t('errors.pessimistic', operator: operator)
+    end
+
+    def check_valid_version(version)
       return if valid_version?(version)
 
       @errors << I18n.t('errors.version', version: version)
     end
 
+    def pessimistic?(operator)
+      operator == '~>'
+    end
+
     def valid_version?(version)
-      return true if version =~ /^\d+\.\d+$/ # major.minor, e.g. "2.5"
+      return true if version =~ /^[1-9]+\.\d+$/ # major.minor, e.g. "2.5"
+      return true if version =~ /^0\.\d+\.\d+$/ # 0.minor.patch, e.g. "0.1.8"
 
       false
+    end
+
+    def any_valid?
+      versions.any? do |operator, version|
+        pessimistic?(operator) && valid_version?(version)
+      end
+    end
+
+    def pessimistic_with_upper_bound?(operator)
+      any_pessimistic? && %w[< <=].include?(operator)
+    end
+
+    def any_pessimistic?
+      versions.any? do |_version, operator|
+        %w[< <= ~>].include?(operator)
+      end
     end
   end
 end

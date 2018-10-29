@@ -5,7 +5,7 @@ module StrongVersions
     def self.find_all(path)
       return [] unless File.exist?(path)
 
-      YAML.load_file(path).fetch('exceptions', [])
+      YAML.load_file(path).fetch('ignore', [])
     end
   end
 end
