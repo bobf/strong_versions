@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe StrongVersions::Dependencies do
   let(:requirements) { ['~> 1.0'] }
   let(:raw_dependency) do
@@ -12,7 +14,9 @@ RSpec.describe StrongVersions::Dependencies do
   it { is_expected.to be_a described_class }
 
   describe '#validate' do
-    subject { dependencies.validate }
+    let(:options) { {} }
+
+    subject { dependencies.validate(options) }
 
     context 'valid requirements' do
       let(:requirements) { ['~> 1.0'] }
@@ -22,6 +26,15 @@ RSpec.describe StrongVersions::Dependencies do
     context 'invalid requirements' do
       let(:requirements) { ['>= 1.0.1'] }
       it { is_expected.to be false }
+    end
+
+    context 'excepted requirements' do
+      let(:options) { { except: 'skip_gem' } }
+      let(:raw_dependency) do
+        double('raw dependency', name: 'skip_gem', requirements_list: ['>= 1'])
+      end
+
+      it { is_expected.to be true }
     end
   end
 
@@ -34,9 +47,7 @@ RSpec.describe StrongVersions::Dependencies do
 
     context 'invalid requirements' do
       let(:requirements) { ['>= 1.0.1'] }
-      it do
-        is_expected.to raise_error Bundler::GemspecError
-      end
+      it { is_expected.to raise_error Bundler::GemspecError }
     end
   end
 end

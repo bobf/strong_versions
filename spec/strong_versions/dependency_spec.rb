@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe StrongVersions::Dependency do
   let(:requirements) { ['~> 1.0'] }
   let(:raw_dependency) do

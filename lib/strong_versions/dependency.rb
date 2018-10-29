@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module StrongVersions
   class Dependency
     attr_reader :name, :errors
@@ -36,18 +38,17 @@ module StrongVersions
     end
 
     def validate_version(operator, version)
-      # TODO: Handle user-specified overrides
       if operator != '~>'
         @errors << I18n.t('errors.pessimistic', operator: operator)
       end
 
-      if !valid_version?(version)
-        @errors << I18n.t('errors.version', version: version)
-      end
+      return if valid_version?(version)
+
+      @errors << I18n.t('errors.version', version: version)
     end
 
     def valid_version?(version)
-      return true if version.match(/^\d+\.\d+$/) # major.minor, e.g. "2.5"
+      return true if version =~ /^\d+\.\d+$/ # major.minor, e.g. "2.5"
 
       false
     end
