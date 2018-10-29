@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     strong_versions (0.1.1)
-      i18n (~> 1.1)
+      i18n (>= 0.5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -60,4 +60,4 @@ DEPENDENCIES
   strong_versions!
 
 BUNDLED WITH
-   1.16.4
+   1.16.5

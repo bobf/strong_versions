@@ -24,9 +24,7 @@ Gem::Specification.new do |spec|
   spec.executables   = []
   spec.require_paths = ['lib']
 
-  # TODO: Set this as a sensible minimum dependency so we can be used in any
-  # project
-  spec.add_dependency 'i18n', '~> 1.1'
+  spec.add_dependency 'i18n', '>= 0.5.0'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'byebug', '~> 10.0'
