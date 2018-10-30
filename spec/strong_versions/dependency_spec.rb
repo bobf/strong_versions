@@ -50,6 +50,11 @@ RSpec.describe StrongVersions::Dependency do
         it_behaves_like 'valid requirements'
       end
 
+      context 'double-digit major version' do
+        let(:requirements) { ['~> 10.0'] }
+        it_behaves_like 'valid requirements'
+      end
+
       context 'source is a path' do
         let(:raw_dependency) do
           double(

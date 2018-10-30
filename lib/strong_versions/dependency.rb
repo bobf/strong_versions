@@ -62,7 +62,7 @@ module StrongVersions
     end
 
     def valid_version?(version)
-      return true if version =~ /^[1-9]+\.\d+$/ # major.minor, e.g. "2.5"
+      return true if version =~ /^[1-9][0-9]*\.\d+$/ # major.minor, e.g. "2.5"
       return true if version =~ /^0\.\d+\.\d+$/ # 0.minor.patch, e.g. "0.1.8"
 
       false
