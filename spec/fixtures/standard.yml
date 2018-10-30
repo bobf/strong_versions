@@ -1,3 +1,4 @@
+on_failure: raise
 ignore:
   - foo
   - bar

@@ -39,12 +39,23 @@ $ bundle install
 
 Once the plugin is installed it will automatically hook into _Bundler_ and raise an exception every time you call `bundle install` if there are any errors.
 
+### Exclusions
+
 <a name="ignore"></a>You can exclude any gems from this list by adding them to the `ignore` section of `.strong_versions.yml` in your project root, e.g.:
 
 ```yaml
 # .strong_versions.yml
 ignore:
   - rails
+```
+
+### Raise or Warn
+
+_StrongVersions_ can be configured to raise an exception (default) when the standard is not met or output a warning. The latter is especially useful if you want to set a loose version on a gem and then build your bundle to allow it to grab the correct version before updating your `Gemfile` with a more appropriate requirement. Set `on_failure` in `.strong_versions.yml` to either `raise` or `warn`:
+
+```yaml
+# .strong_versions.yml
+on_failure: warn
 ```
 
 ## Contributing
