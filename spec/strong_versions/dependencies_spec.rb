@@ -3,7 +3,12 @@
 RSpec.describe StrongVersions::Dependencies do
   let(:requirements) { ['~> 1.0'] }
   let(:raw_dependency) do
-    double('raw dependency', name: 'test_gem', requirements_list: requirements)
+    double(
+      'raw dependency',
+      name: 'test_gem',
+      requirements_list: requirements,
+      source: nil
+    )
   end
 
   let(:gem_dependencies) { [raw_dependency] }
@@ -31,7 +36,12 @@ RSpec.describe StrongVersions::Dependencies do
     context 'excepted requirements' do
       let(:options) { { except: 'skip_gem' } }
       let(:raw_dependency) do
-        double('raw dependency', name: 'skip_gem', requirements_list: ['>= 1'])
+        double(
+          'raw dependency',
+          name: 'skip_gem',
+          requirements_list: ['>= 1'],
+          source: nil
+        )
       end
 
       it { is_expected.to be true }

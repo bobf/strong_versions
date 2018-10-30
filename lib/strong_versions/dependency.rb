@@ -8,7 +8,6 @@ module StrongVersions
       @dependency = dependency
       @name = dependency.name
       @errors = []
-      @pessimistic = false
 
       versions.each do |operator, version|
         validate_version(operator, version)
@@ -39,6 +38,7 @@ module StrongVersions
     end
 
     def validate_version(operator, version)
+      return if path_source?
       return if any_valid?
 
       check_pessimistic(operator)
@@ -72,6 +72,10 @@ module StrongVersions
       versions.any? do |operator, version|
         pessimistic?(operator) && valid_version?(version)
       end
+    end
+
+    def path_source?
+      @dependency.source.is_a?(Bundler::Source::Path)
     end
 
     def pessimistic_with_upper_bound?(operator)

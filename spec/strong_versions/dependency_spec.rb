@@ -3,7 +3,12 @@
 RSpec.describe StrongVersions::Dependency do
   let(:requirements) { ['~> 1.0'] }
   let(:raw_dependency) do
-    double('raw dependency', name: 'test_gem', requirements_list: requirements)
+    double(
+      'raw dependency',
+      name: 'test_gem',
+      requirements_list: requirements,
+      source: nil
+    )
   end
 
   let(:dependency) { described_class.new(raw_dependency) }
@@ -42,6 +47,19 @@ RSpec.describe StrongVersions::Dependency do
 
       context 'sub-1.0' do
         let(:requirements) { ['~> 0.5.1'] }
+        it_behaves_like 'valid requirements'
+      end
+
+      context 'source is a path' do
+        let(:raw_dependency) do
+          double(
+            'raw dependency',
+            name: 'test_gem',
+            requirements_list: ['1.3.0'],
+            source: Bundler::Source::Path.new('/foo/bar')
+          )
+        end
+
         it_behaves_like 'valid requirements'
       end
     end
