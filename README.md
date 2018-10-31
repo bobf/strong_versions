@@ -53,7 +53,11 @@ ignore:
 
 ### Raise or Warn
 
-_StrongVersions_ can be configured to raise an exception (default) when the standard is not met or output a warning. The latter is especially useful if you want to set a loose version on a gem and then build your bundle to allow it to grab the correct version before updating your `Gemfile` with a more appropriate requirement. Set `on_failure` in `.strong_versions.yml` to either `raise` or `warn`:
+_StrongVersions_ can be configured to raise an exception (default) or output a warning when the standard is not met.
+
+Warning instead of raising is especially useful when you want to add new dependencies to your `Gemfile` as you can initially set them with loose requirements and then update the `Gemfile` with more precise values based on your new `Gemfile.lock`.
+
+Set `on_failure` in `.strong_versions.yml` to either `raise` or `warn`:
 
 ```yaml
 # .strong_versions.yml
