@@ -21,6 +21,8 @@ Any gems that do not satisfy these rules will cause `bundle install` to fail and
 
 The benefit of applying this standard is that it [should](https://semver.org/) always be relatively safe to run `bundle update` to upgrade to the latest compatible versions of all dependencies.
 
+![StrongVersions](doc/images/strong-versions-example.png)
+
 ## Installation
 
 Add the plugin to your `Gemfile`
