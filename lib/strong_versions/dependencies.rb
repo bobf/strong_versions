@@ -18,14 +18,12 @@ module StrongVersions
         raise_failure
       when 'warn'
         warn_failure
-      else
-        raise_unknown(on_failure)
       end
     end
 
     def validate(options = {})
       @dependencies.each do |dependency|
-        next if options.fetch(:except, []).include?(dependency.name)
+        next if options.fetch(:except).include?(dependency.name)
         next if dependency.valid?
 
         @invalid_gems.push(dependency) unless dependency.valid?
@@ -33,29 +31,36 @@ module StrongVersions
       @invalid_gems.empty?
     end
 
-    def error_message
-      errors = @invalid_gems.map do |invalid_gem|
-        "#{invalid_gem.name}: #{invalid_gem.errors}"
-      end.join(', ')
-      "StrongVersions expectations not met: #{errors}"
-    end
-
     private
 
     def raise_failure
+      warn_failure
       # We must raise an error that Bundler recognises otherwise it prints a
       # huge amount of output. `Bundler::GemspecError` just outputs the error
       # message we set in red.
-      raise Bundler::GemspecError, error_message
+      raise Bundler::GemspecError, 'StrongVersions failure'
     end
 
     def warn_failure
-      STDERR.puts("\n\n\n" + error_message.red + "\n\n\n")
+      STDERR.puts("\n" + 'StrongVersions expectations not met:'.red + "\n\n")
+      @invalid_gems.each do |gem|
+        STDERR.puts(format_errors(gem.name, gem.errors))
+      end
+      STDERR.puts("\n")
     end
 
     def raise_unknown(on_failure)
       raise Bundler::Error,
             I18n.t('errors.unknown_on_failure', on_failure: on_failure)
+    end
+
+    def format_errors(name, errors)
+      message = "#{name}: ".green
+      message + errors.map do |error|
+        type = I18n.t("errors.#{error[:type]}").red
+        value = error[:value].light_red
+        '"'.red + "#{type} #{value}" + '"'.red
+      end.join(', '.red)
     end
   end
 end

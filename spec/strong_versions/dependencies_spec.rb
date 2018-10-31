@@ -13,14 +13,13 @@ RSpec.describe StrongVersions::Dependencies do
 
   let(:gem_dependencies) { [raw_dependency] }
   let(:dependencies) { described_class.new(gem_dependencies) }
+  let(:options) { { except: [] } }
 
   subject { dependencies }
 
   it { is_expected.to be_a described_class }
 
   describe '#validate' do
-    let(:options) { {} }
-
     subject { dependencies.validate(options) }
 
     context 'valid requirements' do
@@ -34,7 +33,7 @@ RSpec.describe StrongVersions::Dependencies do
     end
 
     context 'excepted requirements' do
-      let(:options) { { except: 'skip_gem' } }
+      let(:options) { { except: ['skip_gem'] } }
       let(:raw_dependency) do
         double(
           'raw dependency',
@@ -49,7 +48,7 @@ RSpec.describe StrongVersions::Dependencies do
   end
 
   describe '#validate!' do
-    subject { proc { dependencies.validate! } }
+    subject { proc { dependencies.validate!(options) } }
     context 'valid requirements' do
       let(:requirements) { ['~> 1.0'] }
       it { is_expected.to_not raise_error }

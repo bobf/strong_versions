@@ -1,5 +1,5 @@
 en:
   errors:
-    pessimistic: "Expected pessimistic operator (~>), found: %{operator}"
-    version: "Expected major and minor version (e.g. 1.2), found: %{version}"
-    unknown_on_failure: "Unknown value for `on_failure`: '%{on_failure}'. Expected one of ['raise', 'warn']"
+    operator: "Expected pessimistic operator (~>), found:"
+    version: "Expected major and minor version (e.g. 1.2), found:"
+    unknown_on_failure: "StrongVersions: Unknown value for `on_failure` in .strong_versions.yml: '%{on_failure}'. Expected one of %{expected}"

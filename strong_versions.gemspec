@@ -24,13 +24,13 @@ Gem::Specification.new do |spec|
   spec.executables   = []
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'i18n', '>= 0.5.0'
   spec.add_dependency 'colorize', '~> 0.8'
+  spec.add_dependency 'i18n', '>= 0.5.0'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'byebug', '~> 10.0'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-its', '~> 1.2'
-  spec.add_development_dependency 'rubocop', '0.59.2'
+  spec.add_development_dependency 'rubocop', '~> 0.60.0'
 end

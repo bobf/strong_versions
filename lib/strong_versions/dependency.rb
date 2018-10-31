@@ -48,13 +48,13 @@ module StrongVersions
     def check_pessimistic(operator)
       return if pessimistic?(operator)
 
-      @errors << I18n.t('errors.pessimistic', operator: operator)
+      @errors << { type: :operator, value: operator }
     end
 
     def check_valid_version(version)
       return if valid_version?(version)
 
-      @errors << I18n.t('errors.version', version: version)
+      @errors << { type: :version, value: version }
     end
 
     def pessimistic?(operator)

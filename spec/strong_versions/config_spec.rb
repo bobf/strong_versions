@@ -11,11 +11,25 @@ RSpec.describe StrongVersions::Config do
 
   it { is_expected.to be_a described_class }
 
+  context 'unknown on_failure setting' do
+    let(:path) { fixture_path('unknown_on_failure') }
+
+    subject { proc { config } }
+
+    it { is_expected.to raise_error Bundler::BundlerError }
+  end
+
   describe '#exceptions' do
     subject { config.exceptions }
 
     context 'config exists' do
       it { is_expected.to eql %w[foo bar baz] }
+    end
+
+    context 'config exists but no exceptions set' do
+      let(:path) { fixture_path('warn_on_failure') }
+
+      it { is_expected.to be_empty }
     end
 
     context 'config does not exist' do
