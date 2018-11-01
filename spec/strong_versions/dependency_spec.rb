@@ -55,6 +55,18 @@ RSpec.describe StrongVersions::Dependency do
         it_behaves_like 'valid requirements'
       end
 
+      context 'source is git' do
+        let(:raw_dependency) do
+          double(
+            'raw dependency',
+            name: 'test_gem',
+            requirements_list: ['1'],
+            source: Bundler::Source::Git.new('git://git.example.com/repo.git')
+          )
+        end
+
+        it_behaves_like 'valid requirements'
+      end
       context 'source is a path' do
         let(:raw_dependency) do
           double(

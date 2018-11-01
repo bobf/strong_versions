@@ -76,6 +76,8 @@ module StrongVersions
     end
 
     def path_source?
+      # Bundler::Source::Git inherits from Bundler::Source::Path so git sources
+      # will also return `true`.
       @dependency.source.is_a?(Bundler::Source::Path)
     end
 
