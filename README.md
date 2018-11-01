@@ -13,8 +13,8 @@ _StrongVersions_ is a _Bundler_ plugin that enforces a strict policy on your `Ge
 * The pessimistic `~>` operator must be used for all gem requirement definitions.
 * If the gem version is greater than 1, the requirement format must be `major.minor`, e.g. `'~> 2.5`'
 * If the gem version is less than 1, the requirement format must be `major.minor.patch`, e.g. `'~> 0.8.9'`
-* An upper bound can be specified as long as a valid pessimistic version is also specified, e.g. `'~> 8.4', '<= 8.4.7'`
-* All gems with a `path` or `git` source are ignored, e.g. `path: '/path/to/gem'`, `git: 'https://github.com/bobf/strong_versions'
+* An upper bound can be specified as long as a valid pessimistic version is also specified, e.g. `'~> 8.4', '< 8.6.7' # Bug introduced in 8.6.7`
+* All gems with a `path` or `git` source are ignored, e.g. `path: '/path/to/gem'`, `git: 'https://github.com/bobf/strong_versions'`
 * All gems specified in the [ignore list](#ignore) are ignored.
 
 Any gems that do not satisfy these rules will cause `bundle install` to fail and give output detailing which gems did not meet the standard and why.
