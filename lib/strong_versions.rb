@@ -1,19 +1,25 @@
 # frozen_string_literal: true
 
-require 'colorize'
-require 'i18n'
 require 'yaml'
 
-I18n.config.available_locales = :en
-I18n.load_path += Dir[
-  File.join(File.expand_path('..', __dir__), 'config', 'locales', '**', '*.yml')
-]
+begin
+  require 'i18n'
+  I18n.config.available_locales = :en
+  I18n.load_path += Dir[
+    File.join(
+      File.expand_path('..', __dir__), 'config', 'locales', '**', '*.yml'
+    )
+  ]
+rescue LoadError
+  require 'strong_versions/i18n_stub'
+end
 
 require 'strong_versions/config'
 require 'strong_versions/dependency'
 require 'strong_versions/dependencies'
 require 'strong_versions/gemfile_dsl'
 require 'strong_versions/install_detector'
+require 'strong_versions/terminal'
 require 'strong_versions/version'
 
 module StrongVersions

@@ -42,25 +42,17 @@ module StrongVersions
     end
 
     def warn_failure
-      STDERR.puts("\n" + 'StrongVersions expectations not met:'.red + "\n\n")
+      terminal = Terminal.new
+      terminal.warn("\nStrongVersions expectations not met:\n")
       @invalid_gems.each do |gem|
-        STDERR.puts(format_errors(gem.name, gem.errors))
+        terminal.output_errors(gem.name, gem.errors)
       end
-      STDERR.puts("\n")
+      terminal.puts("\n")
     end
 
     def raise_unknown(on_failure)
       raise Bundler::Error,
             I18n.t('errors.unknown_on_failure', on_failure: on_failure)
-    end
-
-    def format_errors(name, errors)
-      message = "#{name}: ".green
-      message + errors.map do |error|
-        type = I18n.t("errors.#{error[:type]}").red
-        value = error[:value].light_red
-        '"'.red + "#{type} #{value}" + '"'.red
-      end.join(', '.red)
     end
   end
 end
