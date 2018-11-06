@@ -1,0 +1,12 @@
+source 'https://rubygems.org'
+
+ruby '2.5.3'
+
+gem 'rails', '~> 5.2.1'
+gem 'sqlite3'
+
+plugin 'strong_versions', '0.2.0'
+
+group :development, :test do
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+end
