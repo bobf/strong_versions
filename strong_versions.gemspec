@@ -24,6 +24,10 @@ Gem::Specification.new do |spec|
   spec.executables   = []
   spec.require_paths = ['lib']
 
+  # Rails 4 is locked to I18n ~> 0.7 so, unfortunately, until we are ready to
+  # stop supporting Rails 4 we need to support I18n 0.x and 1.x. At some point,
+  # I will do a release that is locked to '~> 1.0' and Rails 4 users can use
+  # an older version of the gem but we are not quite there yet.
   spec.add_dependency 'i18n', '>= 0.5.0'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
