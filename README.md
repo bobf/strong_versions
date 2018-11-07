@@ -28,7 +28,7 @@ The benefit of applying this standard is that it [should](https://semver.org/) a
 Add the plugin to your `Gemfile`
 
 ```ruby
-plugin 'strong_versions', '~> 0.2.0'
+plugin 'strong_versions', '~> 0.2.1'
 ```
 
 And rebuild your bundle:
@@ -39,7 +39,9 @@ $ bundle install
 
 ## Usage
 
-Once the plugin is installed it will automatically hook into _Bundler_ and raise an exception every time you call `bundle install` if there are any errors.
+_StrongVersions_ will automatically hook into _Bundler_ and raise an exception every time you call `bundle install` if there are any errors.
+
+If you prefer to see a warning rather than raise an exception, see [raise or warn](#raise_or_warn).
 
 ### Exclusions
 
@@ -53,7 +55,7 @@ ignore:
 
 ### Raise or Warn
 
-_StrongVersions_ can be configured to raise an exception (default) or output a warning when the standard is not met.
+<a name="raise_or_warn"></a>_StrongVersions_ can be configured to raise an exception (default) or output a warning when the standard is not met.
 
 Warning instead of raising is especially useful when you want to add new dependencies to your `Gemfile` as you can initially set them with loose requirements and then update the `Gemfile` with more precise values based on your new `Gemfile.lock`.
 
