@@ -19,7 +19,7 @@ _StrongVersions_ is a _Bundler_ plugin that enforces a strict policy on your `Ge
 
 Any gems that do not satisfy these rules will cause `bundle install` to fail and give output detailing which gems did not meet the standard and why.
 
-The benefit of applying this standard is that it [should](https://semver.org/) always be relatively safe to run `bundle update` to upgrade to the latest compatible versions of all dependencies.
+The benefit of applying this standard is that, if all gems follow [Semantic Versioning](https://semver.org/) always be relatively safe to run `bundle update` to upgrade to the latest compatible versions of all dependencies.
 
 ![StrongVersions](doc/images/strong-versions-example.png)
 
