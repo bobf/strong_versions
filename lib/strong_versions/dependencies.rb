@@ -10,7 +10,7 @@ module StrongVersions
     end
 
     def validate!(options = {})
-      return if validate(options)
+      return true if validate(options)
 
       on_failure = options.fetch(:on_failure, 'raise')
       case on_failure
@@ -19,6 +19,8 @@ module StrongVersions
       when 'warn'
         warn_failure
       end
+
+      false
     end
 
     def validate(options = {})

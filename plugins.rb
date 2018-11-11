@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# XXX: StrongVersions was intended to be a Bundler plugin but, unfortunately,
+# the plugin system is still in its infancy and has many issues which make it
+# not fit for purpose. If those issues get resolved then I will re-add
+# documentation for use as a plugin.
+
 require 'strong_versions'
 
 Bundler::Plugin.add_hook('before-install-all') do |dependencies|

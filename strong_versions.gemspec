@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.bindir        = 'bin'
-  spec.executables   = []
+  spec.executables   = %w[strong_versions]
   spec.require_paths = ['lib']
 
   # Rails 4 is locked to I18n ~> 0.7 so, unfortunately, until we are ready to

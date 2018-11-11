@@ -8,7 +8,7 @@ Is right here inside us
 
 # Overview
 
-_StrongVersions_ is a _Bundler_ plugin that enforces a strict policy on your `Gemfile` requirements:
+_StrongVersions_ enforces a strict policy on your `Gemfile` requirements:
 
 * The pessimistic `~>` operator must be used for all gem requirement definitions.
 * If the gem version is greater than 1, the requirement format must be `major.minor`, e.g. `'~> 2.5`'
@@ -17,18 +17,18 @@ _StrongVersions_ is a _Bundler_ plugin that enforces a strict policy on your `Ge
 * All gems with a `path` or `git` source are ignored, e.g. `path: '/path/to/gem'`, `git: 'https://github.com/bobf/strong_versions'`
 * All gems specified in the [ignore list](#ignore) are ignored.
 
-Any gems that do not satisfy these rules will cause `bundle install` to fail and give output detailing which gems did not meet the standard and why.
+Any gems that do not satisfy these rules will be included in included in the _StrongVersions_ output with details on why they did not meet the standard.
 
-The benefit of applying this standard is that, if all gems follow [Semantic Versioning](https://semver.org/) always be relatively safe to run `bundle update` to upgrade to the latest compatible versions of all dependencies.
+The benefit of applying this standard is that, if all gems follow [Semantic Versioning](https://semver.org/) always be relatively safe to run `bundle update` to upgrade to the latest compatible versions of all dependencies. Running `bundle update` often brings advantages both in terms of bug fixes and security updates.
 
 ![StrongVersions](doc/images/strong-versions-example.png)
 
 ## Installation
 
-Add the plugin to your `Gemfile`
+Add the gem to your `Gemfile`
 
 ```ruby
-plugin 'strong_versions', '~> 0.2.1'
+gem 'strong_versions', '~> 0.3.0'
 ```
 
 And rebuild your bundle:
@@ -37,33 +37,29 @@ And rebuild your bundle:
 $ bundle install
 ```
 
+Or install yourself:
+```bash
+$ gem install strong_versions -v '0.3.0'
+```
+
 ## Usage
 
-_StrongVersions_ will automatically hook into _Bundler_ and raise an exception every time you call `bundle install` if there are any errors.
+_StrongVersions_ is invoked with a provided executable:
 
-If you prefer to see a warning rather than raise an exception, see [raise or warn](#raise_or_warn).
+```bash
+$ bundle exec strong_versions
+```
+
+The executable will output all non-passing gems and will return an exit code of `1` on failure, `0` on success (i.e. all gems passing).
 
 ### Exclusions
 
-<a name="ignore"></a>You can exclude any gems from this list by adding them to the `ignore` section of `.strong_versions.yml` in your project root, e.g.:
+<a name="ignore"></a>You can tell _StrongVersions_ to ignore any of your gems (e.g. those that don't follow _semantic versioning_) by adding them to the `ignore` section of `.strong_versions.yml` in your project root, e.g.:
 
 ```yaml
 # .strong_versions.yml
 ignore:
   - rails
-```
-
-### Raise or Warn
-
-<a name="raise_or_warn"></a>_StrongVersions_ can be configured to raise an exception (default) or output a warning when the standard is not met.
-
-Warning instead of raising is especially useful when you want to add new dependencies to your `Gemfile` as you can initially set them with loose requirements and then update the `Gemfile` with more precise values based on your new `Gemfile.lock`.
-
-Set `on_failure` in `.strong_versions.yml` to either `raise` or `warn`:
-
-```yaml
-# .strong_versions.yml
-on_failure: warn
 ```
 
 ## Contributing
