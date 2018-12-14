@@ -14,30 +14,44 @@ module StrongVersions
     end
 
     def warn(string)
-      puts(color(:red, string))
+      puts(color(:light_red, string))
     end
 
-    def success(string)
-      puts(color(:green, string))
+    def success(prefix, highlight, suffix)
+      puts
+      puts(prefix + color(:green, highlight) + suffix)
     end
 
-    def output_errors(name, errors)
-      puts(format_errors(name, errors))
+    def output_errors(name, errors, suggestion)
+      puts('`' + color(:red, name) + '`:')
+      puts(format_errors(errors))
+      puts('  Suggested: ' + color(:green, suggestion)) unless suggestion.nil?
+      puts
     end
 
-    def puts(string)
+    def puts(string = '')
       @file.puts(string)
     end
 
     private
 
-    def format_errors(name, errors)
-      message = color(:green, "#{name}: ")
-      message + errors.map do |error|
-        type = color(:red, I18n.t("strong_versions.errors.#{error[:type]}"))
+    def format_errors(errors)
+      errors.map do |error|
+        type = I18n.t("strong_versions.errors.#{error[:type]}")
         value = color(:light_red, error[:value])
-        color(:red, '"') + "#{type} #{value}" + color(:red, '"')
-      end.join(color(:red, ', '))
+        "  #{type} #{example(error[:type])}, found: #{value}"
+      end
+    end
+
+    def example(type)
+      case type
+      when :operator
+        color(:green, '~>')
+      when :version
+        "'#{color(:green, '1.2')}' or '#{color(:green, '0.2.3')}'"
+      else
+        raise ArgumentError
+      end
     end
 
     def color(name, string)

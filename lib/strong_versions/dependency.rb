@@ -18,6 +18,19 @@ module StrongVersions
       @errors.empty?
     end
 
+    def suggestion
+      return nil if lockfile_version.nil?
+
+      split = lockfile_version.split('.')
+      return nil unless split.size == 3
+
+      major, minor, patch = split
+      return "'~> #{major}.#{minor}'" if major.to_i >= 1
+      return "'~> #{major}.#{minor}.#{patch}'" if major == '0'
+
+      nil
+    end
+
     private
 
     def versions
@@ -28,13 +41,25 @@ module StrongVersions
 
     def parse_version(requirement)
       operator, version_obj = Gem::Requirement.parse(requirement)
-      if version_obj.respond_to?(:version)
-        # Ruby >= 2.3.0: `version_obj` is a `Gem::Version`
-        [operator, version_obj.version]
-      else
-        # Ruby < 2.3.0: `version_obj` is a `String`
-        [operator, version_obj]
-      end
+      [operator, version(version_obj)]
+    end
+
+    def lockfile_version
+      @lockfile_version ||= version(
+        lockfile.specs.find { |spec| spec.name == @name }&.version
+      )
+    end
+
+    def lockfile
+      Bundler::LockfileParser.new(Bundler.read_file(Bundler.default_lockfile))
+    end
+
+    def version(version_obj)
+      # Ruby >= 2.3.0: `version_obj` is a `Gem::Version`
+      return version_obj.version if version_obj.respond_to?(:version)
+
+      # Ruby < 2.3.0: `version_obj` is a `String`
+      version_obj
     end
 
     def validate_version(operator, version)

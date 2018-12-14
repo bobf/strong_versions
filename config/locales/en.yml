@@ -1,8 +1,11 @@
 en:
   strong_versions:
     errors:
-      operator: "Expected pessimistic operator (~>), found:"
-      version: "Expected major and minor version (e.g. 1.2), found:"
+      operator: "Expected pessimistic operator:"
+      version: "Expected major and minor version or unstable version, e.g."
       unknown_on_failure: "StrongVersions: Unknown value for `on_failure` in .strong_versions.yml: '%{on_failure}'. Expected one of %{expected}"
     version_not_specified: "[not specified]"
-    success: "%{count} gems checked, no version issues detected."
+    success:
+      1: "%{count} gem definitions checked, "
+      2: "no issues "
+      3: "detected"

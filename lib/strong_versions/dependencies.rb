@@ -38,7 +38,9 @@ module StrongVersions
 
     def success
       @terminal.success(
-        I18n.t('strong_versions.success', count: @dependencies.size)
+        I18n.t('strong_versions.success.1', count: @dependencies.size),
+        I18n.t('strong_versions.success.2'),
+        I18n.t('strong_versions.success.3')
       )
       true
     end
@@ -54,7 +56,7 @@ module StrongVersions
     def warn_failure
       @terminal.warn("\nStrongVersions expectations not met:\n")
       @invalid_gems.each do |gem|
-        @terminal.output_errors(gem.name, gem.errors)
+        @terminal.output_errors(gem.name, gem.errors, gem.suggestion)
       end
       @terminal.puts("\n")
     end

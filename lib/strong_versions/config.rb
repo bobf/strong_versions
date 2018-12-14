@@ -3,19 +3,19 @@
 module StrongVersions
   class Config
     def initialize(path)
-      @config = (YAML.load_file(path) if File.exist?(path))
+      @config = YAML.load_file(path) if File.exist?(path)
 
       validate_on_failure
     end
 
     def exceptions
-      return [] if @config.nil?
+      return [] unless @config
 
       @config.fetch('ignore', [])
     end
 
     def on_failure
-      return 'raise' if @config.nil?
+      return 'raise' unless @config
 
       @config.fetch('on_failure', 'raise')
     end
