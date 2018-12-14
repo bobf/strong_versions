@@ -29,8 +29,8 @@ module StrongVersions
 
       raise Bundler::BundlerError,
             I18n.t(
-              'errors.unknown_on_failure', on_failure: strategy,
-                                           expected: expected
+              'strong_versions.errors.unknown_on_failure',
+              on_failure: strategy, expected: expected
             )
     end
   end

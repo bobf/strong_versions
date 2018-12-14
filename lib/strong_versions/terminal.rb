@@ -17,6 +17,10 @@ module StrongVersions
       puts(color(:red, string))
     end
 
+    def success(string)
+      puts(color(:green, string))
+    end
+
     def output_errors(name, errors)
       puts(format_errors(name, errors))
     end
@@ -30,7 +34,7 @@ module StrongVersions
     def format_errors(name, errors)
       message = color(:green, "#{name}: ")
       message + errors.map do |error|
-        type = color(:red, I18n.t("errors.#{error[:type]}"))
+        type = color(:red, I18n.t("strong_versions.errors.#{error[:type]}"))
         value = color(:light_red, error[:value])
         color(:red, '"') + "#{type} #{value}" + color(:red, '"')
       end.join(color(:red, ', '))
@@ -44,8 +48,7 @@ module StrongVersions
     def check_i18n
       return unless I18n.respond_to?(:_strong_versions__stub)
 
-      warn("\n`i18n` not installed. Using fallback.")
-      warn('Output will improve when your bundle installation completes.')
+      warn("\nStrongVersions: `i18n` not installed. Using fallback.")
     end
   end
 end

@@ -54,8 +54,12 @@ module StrongVersions
     def check_valid_version(version)
       return if valid_version?(version)
 
-      version = I18n.t('version_not_specified') if version == '0'
-      @errors << { type: :version, value: version }
+      value = if version == '0'
+                I18n.t('strong_versions.version_not_specified')
+              else
+                version
+              end
+      @errors << { type: :version, value: value }
     end
 
     def pessimistic?(operator)

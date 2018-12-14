@@ -4,8 +4,7 @@ require 'strong_versions'
 
 config_path = Bundler.root.join('.strong_versions.yml')
 config = StrongVersions::Config.new(config_path)
-dependencies = Bundler.definition.dependencies
-
+dependencies = StrongVersions::DependencyFinder.new.dependencies
 valid = StrongVersions::Dependencies.new(dependencies).validate!(
   except: config.exceptions,
   on_failure: 'warn'

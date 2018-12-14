@@ -7,10 +7,11 @@ module StrongVersions
         Dependency.new(raw_dependency)
       end
       @invalid_gems = []
+      @terminal = Terminal.new
     end
 
     def validate!(options = {})
-      return true if validate(options)
+      return success if validate(options)
 
       on_failure = options.fetch(:on_failure, 'raise')
       case on_failure
@@ -35,6 +36,12 @@ module StrongVersions
 
     private
 
+    def success
+      @terminal.success(
+        I18n.t('strong_versions.success', count: @dependencies.size)
+      )
+    end
+
     def raise_failure
       warn_failure
       # We must raise an error that Bundler recognises otherwise it prints a
@@ -44,17 +51,19 @@ module StrongVersions
     end
 
     def warn_failure
-      terminal = Terminal.new
-      terminal.warn("\nStrongVersions expectations not met:\n")
+      @terminal.warn("\nStrongVersions expectations not met:\n")
       @invalid_gems.each do |gem|
-        terminal.output_errors(gem.name, gem.errors)
+        @terminal.output_errors(gem.name, gem.errors)
       end
-      terminal.puts("\n")
+      @terminal.puts("\n")
     end
 
     def raise_unknown(on_failure)
       raise Bundler::Error,
-            I18n.t('errors.unknown_on_failure', on_failure: on_failure)
+            I18n.t(
+              'strong_versions.errors.unknown_on_failure',
+              on_failure: on_failure
+            )
     end
   end
 end
