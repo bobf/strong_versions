@@ -40,6 +40,7 @@ module StrongVersions
       @terminal.success(
         I18n.t('strong_versions.success', count: @dependencies.size)
       )
+      true
     end
 
     def raise_failure
