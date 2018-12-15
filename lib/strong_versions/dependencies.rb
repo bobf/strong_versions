@@ -56,7 +56,7 @@ module StrongVersions
     def warn_failure
       @terminal.warn("\nStrongVersions expectations not met:\n")
       @invalid_gems.each do |gem|
-        @terminal.output_errors(gem.name, gem.errors, gem.suggestion)
+        @terminal.output_errors(gem)
       end
       @terminal.puts("\n")
     end

@@ -31,6 +31,10 @@ module StrongVersions
       nil
     end
 
+    def definition
+      versions.map { |operator, version| "'#{operator} #{version}'" }.join(', ')
+    end
+
     private
 
     def versions

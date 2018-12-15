@@ -22,10 +22,12 @@ module StrongVersions
       puts(prefix + color(:green, highlight) + suffix)
     end
 
-    def output_errors(name, errors, suggestion)
-      puts('`' + color(:red, name) + '`:')
-      puts(format_errors(errors))
-      puts('  Suggested: ' + color(:green, suggestion)) unless suggestion.nil?
+    def output_errors(gem)
+      definition = color(:light_red, gem.definition)
+      puts('`' + color(:red, gem.name) + '`: ' + definition)
+      puts(format_errors(gem.errors))
+      suggested = '  ' + I18n.t('strong_versions.errors.suggested')
+      puts(suggested + color(:green, gem.suggestion)) unless gem.suggestion.nil?
       puts
     end
 
