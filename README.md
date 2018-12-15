@@ -50,7 +50,7 @@ _StrongVersions_ is invoked with a provided executable:
 $ bundle exec strong_versions
 ```
 
-The executable will output all non-passing gems and will return an exit code of `1` on failure, `0` on success (i.e. all gems passing).
+The executable will output all non-passing gems and will return an exit code of `1` on failure, `0` on success (i.e. all gems passing). This makes _StrongVersions_ suitable for use in a continuous integration pipeline.
 
 ### Exclusions
 
