@@ -27,7 +27,7 @@ module StrongVersions
       puts('`' + color(:red, gem.name) + '`: ' + definition)
       puts(format_errors(gem.errors))
       suggested = '  ' + I18n.t('strong_versions.errors.suggested')
-      puts(suggested + color(:green, gem.suggestion)) unless gem.suggestion.nil?
+      puts(suggested + color(:green, gem.suggestion)) unless gem.suggestion.missing?
       puts
     end
 

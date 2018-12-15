@@ -4,10 +4,11 @@ module StrongVersions
   class Dependency
     attr_reader :name, :errors
 
-    def initialize(dependency)
+    def initialize(dependency, lockfile = nil)
       @dependency = dependency
       @name = dependency.name
       @errors = []
+      @lockfile = lockfile || default_lockfile
 
       versions.each do |operator, version|
         validate_version(operator, version)
@@ -19,16 +20,7 @@ module StrongVersions
     end
 
     def suggestion
-      return nil if lockfile_version.nil?
-
-      split = lockfile_version.split('.')
-      return nil unless split.size == 3
-
-      major, minor, patch = split
-      return "'~> #{major}.#{minor}'" if major.to_i >= 1
-      return "'~> #{major}.#{minor}.#{patch}'" if major == '0'
-
-      nil
+      Suggestion.new(lockfile_version)
     end
 
     def definition
@@ -50,11 +42,11 @@ module StrongVersions
 
     def lockfile_version
       @lockfile_version ||= version(
-        lockfile.specs.find { |spec| spec.name == @name }&.version
+        @lockfile.specs.find { |spec| spec.name == @name }&.version
       )
     end
 
-    def lockfile
+    def default_lockfile
       Bundler::LockfileParser.new(Bundler.read_file(Bundler.default_lockfile))
     end
 

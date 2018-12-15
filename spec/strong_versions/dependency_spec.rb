@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe StrongVersions::Dependency do
+  subject { dependency }
+
   let(:requirements) { ['~> 1.0'] }
   let(:raw_dependency) do
     double(
@@ -11,9 +13,8 @@ RSpec.describe StrongVersions::Dependency do
     )
   end
 
-  let(:dependency) { described_class.new(raw_dependency) }
-
-  subject { dependency }
+  let(:dependency) { described_class.new(raw_dependency, lockfile) }
+  let(:lockfile) { nil }
 
   it { is_expected.to be_a described_class }
   its(:name) { is_expected.to eql 'test_gem' }
@@ -26,6 +27,20 @@ RSpec.describe StrongVersions::Dependency do
   shared_examples 'invalid requirements' do |errors:|
     its(:valid?) { is_expected.to be false }
     its('errors.size') { is_expected.to eql errors }
+  end
+
+  describe '#suggestion' do
+    subject(:suggestion) { dependency.suggestion.to_s }
+    let(:lockfile) { instance_double(Bundler::LockfileParser) }
+    let(:spec) { instance_double(Bundler::LazySpecification) }
+
+    before do
+      allow(lockfile).to receive(:specs) { [spec] }
+      allow(spec).to receive(:name) { 'test_gem' }
+      allow(spec).to receive(:version) { '1.4.8' }
+    end
+
+    it { is_expected.to eql "'~> 1.4'" }
   end
 
   describe '#valid?, #errors' do

@@ -18,6 +18,7 @@ require 'strong_versions/config'
 require 'strong_versions/dependency'
 require 'strong_versions/dependency_finder'
 require 'strong_versions/dependencies'
+require 'strong_versions/suggestion'
 require 'strong_versions/terminal'
 require 'strong_versions/version'
 
