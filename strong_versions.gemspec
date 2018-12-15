@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
   # I will do a release that is locked to '~> 1.0' and Rails 4 users can use
   # an older version of the gem but we are not quite there yet.
   spec.add_dependency 'i18n', '>= 0.5.0'
+  spec.add_dependency 'paint', '~> 2.0'
 
   spec.add_development_dependency 'betterp', '~> 0.1.2'
   spec.add_development_dependency 'bundler', '~> 1.16'

@@ -5,6 +5,10 @@ Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
 
+Style/FormatStringToken:
+  Exclude:
+    # The `Paint` gem requires this format of string template.
+    - 'lib/strong_versions/terminal.rb'
 AllCops:
   Exclude:
     - 'bin/**/*'

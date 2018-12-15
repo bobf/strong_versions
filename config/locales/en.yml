@@ -1,12 +1,15 @@
 en:
   strong_versions:
+    checked: "gem definitions inspected"
+    no_issues: 'no issues'
+    issue: 'issue'
+    issues: 'issues'
+    detected: 'detected'
+
     errors:
+      failure: "StrongVersions Failure"
       operator: "Expected pessimistic operator:"
       version: "Expected major and minor version or unstable version, e.g."
       unknown_on_failure: "StrongVersions: Unknown value for `on_failure` in .strong_versions.yml: '%{on_failure}'. Expected one of %{expected}"
       suggested: 'Suggested: '
     version_not_specified: "[not specified]"
-    success:
-      1: "%{count} gem definitions checked, "
-      2: "no issues "
-      3: "detected"

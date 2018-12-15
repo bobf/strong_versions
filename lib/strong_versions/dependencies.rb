@@ -11,16 +11,13 @@ module StrongVersions
     end
 
     def validate!(options = {})
-      return success if validate(options)
-
-      on_failure = options.fetch(:on_failure, 'raise')
-      case on_failure
-      when 'raise'
-        raise_failure
-      when 'warn'
-        warn_failure
+      if validate(options)
+        summary
+        return true
       end
 
+      raise_or_warn(options.fetch(:on_failure, 'raise'))
+      summary
       false
     end
 
@@ -36,13 +33,17 @@ module StrongVersions
 
     private
 
-    def success
-      @terminal.success(
-        I18n.t('strong_versions.success.1', count: @dependencies.size),
-        I18n.t('strong_versions.success.2'),
-        I18n.t('strong_versions.success.3')
-      )
-      true
+    def summary
+      @terminal.summary(@dependencies.size, @invalid_gems.size)
+    end
+
+    def raise_or_warn(on_failure)
+      case on_failure
+      when 'raise'
+        raise_failure
+      when 'warn'
+        warn_failure
+      end
     end
 
     def raise_failure
@@ -54,7 +55,7 @@ module StrongVersions
     end
 
     def warn_failure
-      @terminal.warn("\nStrongVersions expectations not met:\n")
+      @terminal.warn("\n#{I18n.t('strong_versions.errors.failure')}\n")
       @invalid_gems.each do |gem|
         @terminal.output_errors(gem)
       end

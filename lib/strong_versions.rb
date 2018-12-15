@@ -2,17 +2,8 @@
 
 require 'yaml'
 
-begin
-  require 'i18n'
-  I18n.config.available_locales = :en
-  I18n.load_path += Dir[
-    File.join(
-      File.expand_path('..', __dir__), 'config', 'locales', '**', '*.yml'
-    )
-  ]
-rescue LoadError
-  require 'strong_versions/i18n_stub'
-end
+require 'i18n'
+require 'paint'
 
 require 'strong_versions/config'
 require 'strong_versions/dependency'
@@ -27,3 +18,8 @@ module StrongVersions
     Pathname.new(File.dirname(__dir__))
   end
 end
+
+I18n.config.available_locales = :en
+I18n.load_path += Dir[
+  StrongVersions.root.join('config', 'locales', '**', '*.yml')
+]

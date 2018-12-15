@@ -2,32 +2,25 @@
 
 module StrongVersions
   class Terminal
-    COLOR_CODES = {
-      red: 31,
-      green: 32,
-      light_red: 91
-    }.freeze
-
     def initialize(file = STDERR)
       @file = file
-      check_i18n
     end
 
     def warn(string)
-      puts(color(:light_red, string))
+      puts(color(string, :underline, :bright, :red))
     end
 
-    def success(prefix, highlight, suffix)
-      puts
-      puts(prefix + color(:green, highlight) + suffix)
+    def summary(count, failed)
+      return puts(success(count)) if failed.zero?
+
+      puts(failure(count, failed))
     end
 
     def output_errors(gem)
-      definition = color(:light_red, gem.definition)
-      puts('`' + color(:red, gem.name) + '`: ' + definition)
+      puts(name_and_definition(gem))
+
       puts(format_errors(gem.errors))
-      suggested = '  ' + I18n.t('strong_versions.errors.suggested')
-      puts(suggested + color(:green, gem.suggestion)) unless gem.suggestion.missing?
+      suggestion(gem)
       puts
     end
 
@@ -37,34 +30,77 @@ module StrongVersions
 
     private
 
+    def t(name)
+      I18n.t("strong_versions.#{name}")
+    end
+
+    # Success and failure output format brazenly stolen from Rubocop.
+    def success(count)
+      color(
+        "#{count} #{t('checked')}, %{no_issues} #{t('detected')}",
+        :default,
+        no_issues: [t('no_issues'), :green]
+      )
+    end
+
+    def failure(count, failed)
+      issues = "#{failed} " + (failed == 1 ? t('issue') : t('issues'))
+      color(
+        "#{count} #{t('checked')}, %{issues} #{t('detected')}",
+        :default,
+        issues: [issues, :red]
+      )
+    end
+
     def format_errors(errors)
       errors.map do |error|
-        type = I18n.t("strong_versions.errors.#{error[:type]}")
-        value = color(:light_red, error[:value])
-        "  #{type} #{example(error[:type])}, found: #{value}"
+        type = t("errors.#{error[:type]}")
+        color(
+          '  %{type} %{example}, found: %{found}',
+          :default,
+          type: [type, :default],
+          example: example(error[:type]),
+          found: [error[:value], :red]
+        )
       end
+    end
+
+    def suggestion(gem)
+      suggested = '  ' + t('errors.suggested')
+      puts(
+        color(
+          "#{suggested} %{suggestion}",
+          :default,
+          suggestion: [gem.suggestion.to_s, :green]
+        )
+      )
+    end
+
+    def name_and_definition(gem)
+      color(
+        '`%{name}`: %{definition}',
+        :default,
+        name: [gem.name, :reset, :bright, :red],
+        definition: [gem.definition, :reset, :red]
+      )
     end
 
     def example(type)
       case type
       when :operator
-        color(:green, '~>')
+        color('~>', :green)
       when :version
-        "'#{color(:green, '1.2')}' or '#{color(:green, '0.2.3')}'"
+        color('%{major} or %{minor}', :default, major: ['1.2', :green],
+                                                minor: ['0.2.3', :green])
       else
         raise ArgumentError
       end
     end
 
-    def color(name, string)
-      code = COLOR_CODES.fetch(name)
-      "\033[#{code}m#{string}\033[39m"
-    end
-
-    def check_i18n
-      return unless I18n.respond_to?(:_strong_versions__stub)
-
-      warn("\nStrongVersions: `i18n` not installed. Using fallback.")
+    def color(string, *substitutions)
+      # rubocop:disable Style/FormatString, Layout/SpaceAroundOperators
+      Paint%[string.dup, *substitutions]
+      # rubocop:enable Style/FormatString, Layout/SpaceAroundOperators
     end
   end
 end
