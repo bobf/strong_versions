@@ -39,7 +39,7 @@ $ bundle install
 
 Or install yourself:
 ```bash
-$ gem install strong_versions -v '0.3.0'
+$ gem install strong_versions -v '0.3.1'
 ```
 
 ## Usage
