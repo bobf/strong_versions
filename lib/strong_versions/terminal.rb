@@ -37,7 +37,7 @@ module StrongVersions
     # Success and failure output format brazenly stolen from Rubocop.
     def success(count)
       color(
-        "#{count} #{t('checked')}, %{no_issues} #{t('detected')}",
+        "#{count} #{t('checked')}, %{no_issues} #{t('detected')}\n",
         :default,
         no_issues: [t('no_issues'), :green]
       )
