@@ -28,7 +28,7 @@ The benefit of applying this standard is that, if all gems follow [Semantic Vers
 Add the gem to your `Gemfile`
 
 ```ruby
-gem 'strong_versions', '~> 0.3.1'
+gem 'strong_versions', '~> 0.3.2'
 ```
 
 And rebuild your bundle:
@@ -39,7 +39,7 @@ $ bundle install
 
 Or install yourself:
 ```bash
-$ gem install strong_versions -v '0.3.1'
+$ gem install strong_versions -v '0.3.2'
 ```
 
 ## Usage
