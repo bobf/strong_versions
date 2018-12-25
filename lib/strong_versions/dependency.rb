@@ -41,9 +41,10 @@ module StrongVersions
     end
 
     def lockfile_version
-      @lockfile_version ||= version(
-        @lockfile.specs.find { |spec| spec.name == @name }&.version
-      )
+      @lockfile_version ||= begin
+        gem_spec = @lockfile.specs.find { |spec| spec.name == @name }
+        gem_spec.nil? ? nil : version(gem_spec.version)
+      end
     end
 
     def default_lockfile
