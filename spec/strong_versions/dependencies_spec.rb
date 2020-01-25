@@ -20,7 +20,7 @@ RSpec.describe StrongVersions::Dependencies do
   it { is_expected.to be_a described_class }
 
   describe '#validate' do
-    subject { dependencies.validate(options) }
+    subject(:validate) { dependencies.validate(options) }
 
     context 'valid requirements' do
       let(:requirements) { ['~> 1.0'] }
@@ -45,6 +45,14 @@ RSpec.describe StrongVersions::Dependencies do
 
       it { is_expected.to be true }
     end
+
+    context 'auto-correct' do
+      let(:options) { { auto_correct: true } }
+      it 'raises an error' do
+        expect { validate }
+          .to raise_error(StrongVersions::UnsafeAutoCorrectError)
+      end
+    end
   end
 
   describe '#validate!' do
@@ -57,6 +65,32 @@ RSpec.describe StrongVersions::Dependencies do
     context 'invalid requirements' do
       let(:requirements) { ['>= 1.0.1'] }
       it { is_expected.to raise_error Bundler::GemspecError }
+    end
+
+    context 'auto-correct' do
+      let(:raw_dependency) do
+        double(
+          name: 'test_gem',
+          requirements_list: ['~> 1'],
+          gemfile: Pathname.new(Tempfile.new.path),
+          source: nil
+        )
+      end
+      let(:options) { { auto_correct: true } }
+      let(:gemfile) { raw_dependency.gemfile }
+      let(:lockfile) { StrongVersions.root.join('spec/fixtures/Gemfile.lock') }
+      let(:fixture) do
+        StrongVersions.root.join('spec/fixtures/Gemfile.example')
+      end
+
+      before { File.write(gemfile, File.read(fixture)) }
+      before { allow(Bundler).to receive(:default_lockfile) { lockfile.to_s } }
+
+      it 'auto-corrects gemfile' do
+        expect(File.read(gemfile)).to_not include "gem 'test_gem', '~> 1.3'"
+        dependencies.validate!(options)
+        expect(File.read(gemfile)).to include "gem 'test_gem', '~> 1.3'"
+      end
     end
   end
 end

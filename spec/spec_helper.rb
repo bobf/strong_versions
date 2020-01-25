@@ -4,8 +4,10 @@ require 'bundler/setup'
 require 'rspec/its'
 
 require 'strong_versions'
-
 require 'betterp'
+
+require 'pathname'
+require 'tempfile'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

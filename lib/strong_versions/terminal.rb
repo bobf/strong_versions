@@ -10,6 +10,26 @@ module StrongVersions
       puts(color(string, :underline, :bright, :red))
     end
 
+    def gem_update(path, gem)
+      relpath = path.relative_path_from(Pathname.new(Dir.pwd))
+      output = [
+        color("[#{relpath}] ", :cyan),
+        color(gem.suggested_definition, :green),
+        color(' (was: ', :default),
+        color(gem.definition, :red),
+        color(')', :default)
+      ].join
+      puts(output)
+    end
+
+    def update_summary(updated)
+      output = [
+        color(updated.to_s, :green),
+        color(' gem definitions updated.')
+      ].join
+      puts("\n#{output}")
+    end
+
     def summary(count, failed)
       return puts(success(count)) if failed.zero?
 

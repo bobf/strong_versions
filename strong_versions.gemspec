@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'strong_versions'
   spec.version       = StrongVersions::VERSION
   spec.authors       = ['Bob Farrell']
-  spec.email         = ['robertanthonyfarrell@gmail.com']
+  spec.email         = ['oss@bob.frl']
 
   spec.summary       = 'Enforce strict versioning on your Gemfile'
   spec.description   = 'Ensure your gems are appropriately versioned'

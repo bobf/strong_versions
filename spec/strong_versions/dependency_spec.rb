@@ -9,15 +9,31 @@ RSpec.describe StrongVersions::Dependency do
       'raw dependency',
       name: 'test_gem',
       requirements_list: requirements,
-      source: nil
+      source: nil,
+      gemfile: Pathname.new('/path/to/gemfile')
     )
   end
 
   let(:dependency) { described_class.new(raw_dependency, lockfile) }
+  its(:gemfile) { is_expected.to eql raw_dependency.gemfile }
   let(:lockfile) { nil }
 
   it { is_expected.to be_a described_class }
   its(:name) { is_expected.to eql 'test_gem' }
+
+  describe '#suggested_definition' do
+    subject(:suggested_definition) { dependency.suggested_definition }
+    let(:lockfile) { instance_double(Bundler::LockfileParser) }
+    let(:spec) { instance_double(Bundler::LazySpecification) }
+
+    before do
+      allow(lockfile).to receive(:specs) { [spec] }
+      allow(spec).to receive(:name) { 'test_gem' }
+      allow(spec).to receive(:version) { '1.0.9' }
+    end
+
+    it { is_expected.to eql "gem 'test_gem', '~> 1.0'" }
+  end
 
   shared_examples 'valid requirements' do
     its(:valid?) { is_expected.to be true }

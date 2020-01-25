@@ -11,10 +11,13 @@ module StrongVersions
     end
 
     def validate!(options = {})
+      auto_correct = options.delete(:auto_correct) { false }
       if validate(options)
         summary
         return true
       end
+
+      return update_gemfile if auto_correct
 
       raise_or_warn(options.fetch(:on_failure, 'raise'))
       summary
@@ -22,8 +25,9 @@ module StrongVersions
     end
 
     def validate(options = {})
+      unsafe_autocorrect_error if options[:auto_correct]
       @dependencies.each do |dependency|
-        next if options.fetch(:except).include?(dependency.name)
+        next if options.fetch(:except, []).include?(dependency.name)
         next if dependency.valid?
 
         @invalid_gems.push(dependency) unless dependency.valid?
@@ -33,8 +37,46 @@ module StrongVersions
 
     private
 
+    def unsafe_autocorrect_error
+      raise UnsafeAutoCorrectError, 'Must use #validate! for autocorrect'
+    end
+
     def summary
       @terminal.summary(@dependencies.size, @invalid_gems.size)
+    end
+
+    def update_gemfile
+      updated = 0
+      @dependencies.each do |dependency|
+        next unless dependency.updatable?
+
+        updated += 1 if update_dependency(dependency)
+      end
+      @terminal.update_summary(updated)
+    end
+
+    def update_dependency(dependency)
+      path = dependency.gemfile
+      content = File.read(path)
+      update = replace_gem_definition(dependency, content)
+      return false if content == update
+
+      File.write(path, update)
+      @terminal.gem_update(path, dependency)
+      true
+    end
+
+    def replace_gem_definition(dependency, content)
+      regex = gem_regex(dependency.name)
+      match = content.match(regex)
+      return content unless match
+
+      indent = match.captures.first
+      content.gsub(regex, "#{indent}#{dependency.suggested_definition}")
+    end
+
+    def gem_regex(name)
+      /^(\s*)gem\s+['"]#{name}['"].*$/
     end
 
     def raise_or_warn(on_failure)

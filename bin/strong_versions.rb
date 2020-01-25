@@ -1,5 +1,3 @@
-#!/usr/bin/env ruby
-
 require 'optparse'
 
 require 'strong_versions'
@@ -25,7 +23,13 @@ validated = StrongVersions::Dependencies.new(dependencies).validate!(
   auto_correct: options[:auto_correct]
 )
 
-exec "#{$0}" if options[:auto_correct]
+revalidated = false
+revalidated = StrongVersions::Dependencies.new(dependencies).validate!(
+  except: config.exceptions,
+  on_failure: 'warn',
+  auto_correct: false
+) if options[:auto_correct]
 
-exit 0 if validated
+exit 0 if validated or revalidated
 exit 1
+

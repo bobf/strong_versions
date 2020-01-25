@@ -3,13 +3,26 @@
 module StrongVersions
   class Suggestion
     def initialize(version)
-      @parts = version.split('.') unless version.nil?
+      return if version.nil?
+
+      @parts = version.split('.')
+      # Treat '4.3.2.1' as '4.3.2'
+      @parts.pop if standard?(@parts.first(3)) && @parts.size == 4
     end
 
     def to_s
       return version.to_s if version.nil?
 
       "'~> #{version}'"
+    end
+
+    def version
+      major, minor, patch = @parts if standard?
+
+      return "#{major}.#{minor}" if stable?
+      return "#{major}.#{minor}.#{patch}" if unstable?
+
+      nil
     end
 
     def missing?
@@ -21,15 +34,6 @@ module StrongVersions
 
     private
 
-    def version
-      major, minor, patch = @parts if standard?
-
-      return "#{major}.#{minor}" if stable?
-      return "#{major}.#{minor}.#{patch}" if unstable?
-
-      nil
-    end
-
     def unstable?
       standard? && @parts.first.to_i.zero?
     end
@@ -38,9 +42,9 @@ module StrongVersions
       standard? && @parts.first.to_i >= 1
     end
 
-    def standard?
-      return false if @parts.nil?
-      return false unless @parts.size == 3
+    def standard?(parts = @parts)
+      return false if parts.nil?
+      return false unless parts.size == 3
       return false unless numeric?
 
       true

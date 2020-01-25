@@ -10,6 +10,7 @@ module StrongVersions
 
     def development
       # Gem runtime dependencies are not included here:
+      Bundler.definition.resolve
       Bundler.definition.dependencies
     end
 

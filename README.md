@@ -28,7 +28,7 @@ The benefit of applying this standard is that, if all gems follow [Semantic Vers
 Add the gem to your `Gemfile`
 
 ```ruby
-gem 'strong_versions', '~> 0.3.2'
+gem 'strong_versions', '~> 0.4.0'
 ```
 
 And rebuild your bundle:
@@ -39,7 +39,7 @@ $ bundle install
 
 Or install yourself:
 ```bash
-$ gem install strong_versions -v '0.3.2'
+$ gem install strong_versions -v '0.4.0'
 ```
 
 ## Usage
@@ -53,6 +53,11 @@ $ bundle exec strong_versions
 The executable will output all non-passing gems and will return an exit code of `1` on failure, `0` on success (i.e. all gems passing). This makes _StrongVersions_ suitable for use in a continuous integration pipeline:
 
 ![StrongVersions](doc/images/ci-pipeline.png)
+
+If you are feeling brave, auto-correct is available:
+```bash
+$ bundle exec strong_versions -a
+```
 
 ### Exclusions
 

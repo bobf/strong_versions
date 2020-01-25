@@ -15,6 +15,10 @@ module StrongVersions
       end
     end
 
+    def gemfile
+      Pathname.new(@dependency.gemfile) if @dependency.respond_to?(:gemfile)
+    end
+
     def valid?
       @errors.empty?
     end
@@ -23,8 +27,22 @@ module StrongVersions
       Suggestion.new(lockfile_version)
     end
 
+    def suggested_definition
+      guards = guard_versions.map { |op, version| "'#{op} #{version}'" }
+      combined = [suggestion, *guards].join(', ')
+      "gem '#{@name}', #{combined}"
+    end
+
     def definition
       versions.map { |operator, version| "'#{operator} #{version}'" }.join(', ')
+    end
+
+    def updatable?
+      return false unless gemfile
+      return false if suggestion.missing?
+      return false if path_source?
+
+      true
     end
 
     private
@@ -33,6 +51,11 @@ module StrongVersions
       @dependency.requirements_list.map do |requirement|
         parse_version(requirement)
       end
+    end
+
+    def guard_versions
+      versions.reject { |op, _version| pessimistic?(op) }
+              .reject { |op, version| redundant?(op, version) }
     end
 
     def parse_version(requirement)
@@ -84,6 +107,21 @@ module StrongVersions
       @errors << { type: :version, value: value }
     end
 
+    def redundant?(operator, version)
+      return false unless operator.start_with?('>')
+
+      multiply_version(version) <= multiply_version(suggestion.version)
+    end
+
+    def multiply_version(version)
+      components = version.split('.')
+      # Support extremely precise versions e.g. '1.2.3.4.5.6.7.8.9'
+      components += ['0'] * (10 - components.size)
+      components.reverse.each_with_index.map do |component, index|
+        component.to_i * 10.pow(index + 1)
+      end.sum
+    end
+
     def pessimistic?(operator)
       operator == '~>'
     end
@@ -112,9 +150,8 @@ module StrongVersions
     end
 
     def any_pessimistic?
-      versions.any? do |_version, operator|
-        %w[< <= ~>].include?(operator)
-      end
+      p versions
+      versions.any? { |operator, _version| pessimistic?(operator) }
     end
   end
 end

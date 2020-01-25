@@ -7,6 +7,12 @@ RSpec.describe StrongVersions::Suggestion do
 
   it { is_expected.to be_a described_class }
 
+  describe '#version' do
+    subject(:version) { suggestion.version }
+    let(:version) { '0.2.1' }
+    it { is_expected.to eql '0.2.1' }
+  end
+
   describe '#missing?' do
     subject(:missing) { suggestion.missing? }
 
