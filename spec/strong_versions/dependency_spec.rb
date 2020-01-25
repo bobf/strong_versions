@@ -45,8 +45,8 @@ RSpec.describe StrongVersions::Dependency do
     its('errors.size') { is_expected.to eql errors }
   end
 
-  describe '#suggestion' do
-    subject(:suggestion) { dependency.suggestion.to_s }
+  describe '#suggested_version' do
+    subject(:suggested_version) { dependency.suggested_version.suggestion.to_s }
     let(:lockfile) { instance_double(Bundler::LockfileParser) }
     let(:spec) { instance_double(Bundler::LazySpecification) }
 

@@ -77,10 +77,9 @@ module StrongVersions
         type = t("errors.#{error[:type]}")
         color(
           '  %{type} %{example}, found: %{found}',
-          :default,
-          type: [type, :default],
-          example: example(error[:type]),
-          found: [error[:value], :red]
+          :default, type: [type, :default],
+                    example: example(error[:type]),
+                    found: [error[:value], :red]
         )
       end
     end
@@ -92,10 +91,11 @@ module StrongVersions
     end
 
     def suggestion_definition(gem)
-      unidentified = gem.suggestion.to_s.empty?
+      version = gem.suggested_version.suggestion
+      unidentified = version.empty?
       return [t('no-suggestion'), :yellow] if unidentified
 
-      [gem.suggestion.to_s, :green]
+      [version, :green]
     end
 
     def name_and_definition(gem)

@@ -21,13 +21,13 @@ module StrongVersions
       @errors.empty?
     end
 
-    def suggestion
-      Suggestion.new(lockfile_version)
+    def suggested_version
+      GemVersion.new(GemVersion.new(lockfile_version).version_string)
     end
 
     def suggested_definition
       guards = guard_versions.map { |op, version| "'#{op} #{version}'" }
-      "gem '#{@name}', #{[suggestion, *guards].join(', ')}"
+      "gem '#{@name}', #{[suggested_version.suggestion, *guards].join(', ')}"
     end
 
     def definition
@@ -39,7 +39,7 @@ module StrongVersions
     end
 
     def updatable?
-      gemfile && !suggestion.missing? && !path_source?
+      gemfile && !suggested_version.missing? && !path_source?
     end
 
     private
@@ -54,26 +54,18 @@ module StrongVersions
 
     def parse_version(requirement)
       operator, version_obj = Gem::Requirement.parse(requirement)
-      [operator, version(version_obj)]
+      [operator, GemVersion.new(version_obj)]
     end
 
     def lockfile_version
       @lockfile_version ||= begin
         gem_spec = @lockfile.specs.find { |spec| spec.name == @name }
-        gem_spec.nil? ? nil : version(gem_spec.version)
+        gem_spec.nil? ? nil : gem_spec.version
       end
     end
 
     def default_lockfile
       Bundler::LockfileParser.new(Bundler.read_file(Bundler.default_lockfile))
-    end
-
-    def version(version_obj)
-      # Ruby >= 2.3.0: `version_obj` is a `Gem::Version`
-      return version_obj.version if version_obj.respond_to?(:version)
-
-      # Ruby < 2.3.0: `version_obj` is a `String`
-      version_obj
     end
 
     def validate_version(operator, version)
@@ -91,41 +83,34 @@ module StrongVersions
     end
 
     def check_valid_version(version)
-      return if valid_version?(version)
+      return if version.valid?
 
       value = version == '0' ? t('version_not_specified') : version
       @errors << { type: :version, value: value }
     end
 
     def redundant?(operator, version)
-      return false unless operator.start_with?('>') || pessimistic?(operator)
+      return true if pessimistic?(operator)
+      return false if guard_needed?(operator, version)
 
-      multiply_version(version) <= multiply_version(suggestion.version)
+      true
     end
 
-    def multiply_version(version)
-      # Support extremely precise versions e.g. '1.2.3.4.5.6.7.8.9'
-      components = version.split('.').map(&:to_i)
-      components += [0] * (10 - components.size)
-      components.reverse.each_with_index.map do |component, index|
-        component * 10.pow(index + 1)
-      end.sum
+    def guard_needed?(operator, version)
+      return false unless %w[< <= > >=].include?(operator)
+      return true if %(< <=).include?(operator) && suggested_version < version
+      return true if %(> >=).include?(operator) && suggested_version < version
+
+      false
     end
 
     def pessimistic?(operator)
       operator == '~>'
     end
 
-    def valid_version?(version)
-      return true if version =~ /^[1-9][0-9]*\.\d+$/ # major.minor, e.g. "2.5"
-      return true if version =~ /^0\.\d+\.\d+$/ # 0.minor.patch, e.g. "0.1.8"
-
-      false
-    end
-
     def any_valid?
       versions.any? do |operator, version|
-        pessimistic?(operator) && valid_version?(version)
+        pessimistic?(operator) && version.valid?
       end
     end
 

@@ -71,11 +71,12 @@ RSpec.describe StrongVersions::Dependencies do
       let(:raw_dependency) do
         double(
           name: 'test_gem',
-          requirements_list: ['~> 1'],
+          requirements_list: requirements,
           gemfile: Pathname.new(Tempfile.new.path),
           source: nil
         )
       end
+      let(:requirements) { ['~> 1'] }
       let(:options) { { auto_correct: true } }
       let(:gemfile) { raw_dependency.gemfile }
       let(:lockfile) { StrongVersions.root.join('spec/fixtures/Gemfile.lock') }
@@ -90,6 +91,15 @@ RSpec.describe StrongVersions::Dependencies do
         expect(File.read(gemfile)).to_not include "gem 'test_gem', '~> 1.3'"
         dependencies.validate!(options)
         expect(File.read(gemfile)).to include "gem 'test_gem', '~> 1.3'"
+      end
+
+      context 'with necessary guard definition' do
+        let(:requirements) { ['~> 1', '>= 1.4'] }
+
+        it 'leaves necessary guard definition intact' do
+          dependencies.validate!(options)
+          expect(File.read(gemfile)).to include "'~> 1.3', '>= 1.4'"
+        end
       end
     end
   end

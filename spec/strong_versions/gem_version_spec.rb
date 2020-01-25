@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-RSpec.describe StrongVersions::Suggestion do
-  subject(:suggestion) { described_class.new(version) }
+RSpec.describe StrongVersions::GemVersion do
+  subject(:gem_version) { described_class.new(version) }
 
   let(:version) { '' }
 
   it { is_expected.to be_a described_class }
 
   describe '#version' do
-    subject(:version) { suggestion.version }
+    subject(:version) { gem_version.version }
     let(:version) { '0.2.1' }
     it { is_expected.to eql '0.2.1' }
   end
 
   describe '#missing?' do
-    subject(:missing) { suggestion.missing? }
+    subject(:missing) { gem_version.missing? }
 
     context 'valid version' do
       let(:version) { '1.2.3' }
@@ -27,8 +27,8 @@ RSpec.describe StrongVersions::Suggestion do
     end
   end
 
-  describe '#to_s' do
-    subject(:to_s) { suggestion.to_s }
+  describe '#version_string' do
+    subject { gem_version.suggestion }
 
     context 'stable release' do
       let(:version) { '1.4.8' }
