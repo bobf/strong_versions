@@ -32,7 +32,7 @@ module StrongVersions
 
     def definition
       versions.map do |operator, version|
-        next t('version_not_specified') if operator == '>=' && version == '0'
+        next t('version_not_specified') if operator == '>=' && version.zero?
 
         "'#{operator} #{version}'"
       end.join(', ')
@@ -85,7 +85,7 @@ module StrongVersions
     def check_valid_version(version)
       return if version.valid?
 
-      value = version == '0' ? t('version_not_specified') : version
+      value = version.zero? ? t('version_not_specified') : version
       @errors << { type: :version, value: value }
     end
 

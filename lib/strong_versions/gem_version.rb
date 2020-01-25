@@ -11,6 +11,10 @@ module StrongVersions
       @version
     end
 
+    def zero?
+      @version == '0'
+    end
+
     def suggestion
       return '' if version_string.empty?
 
