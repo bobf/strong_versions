@@ -13,3 +13,4 @@ en:
       unknown_on_failure: "StrongVersions: Unknown value for `on_failure` in .strong_versions.yml: '%{on_failure}'. Expected one of %{expected}"
       suggested: 'Suggested: '
     version_not_specified: "[not specified]"
+    no-suggestion: "[unable to detect installed gem version]"

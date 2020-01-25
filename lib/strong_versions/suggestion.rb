@@ -17,12 +17,13 @@ module StrongVersions
     end
 
     def version
-      major, minor, patch = @parts if standard?
+      return nil unless standard?
 
+      major, minor, patch = @parts
       return "#{major}.#{minor}" if stable?
       return "#{major}.#{minor}.#{patch}" if unstable?
 
-      nil
+      raise 'Unexpected condition met'
     end
 
     def missing?
@@ -44,10 +45,11 @@ module StrongVersions
 
     def standard?(parts = @parts)
       return false if parts.nil?
-      return false unless parts.size == 3
       return false unless numeric?
+      return true if [2, 3].include?(parts.size)
+      return true if parts.size == 3 && unstable?
 
-      true
+      false
     end
 
     def numeric?

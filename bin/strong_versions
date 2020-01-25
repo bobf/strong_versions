@@ -1,15 +1,23 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'optparse'
+require 'shellwords'
 
 require 'strong_versions'
 
+original_args = ARGV.dup
+
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: strong_versions [options]"
+  opts.banner = 'Usage: strong_versions [options]'
 
-  opts.on("-a", "--auto-correct", "Auto-correct (use with caution)") do |v|
+  opts.on('-a', '--auto-correct', 'Auto-correct (use with caution)') do |_v|
     options[:auto_correct] = true
+  end
+
+  opts.on('--no-auto-correct', 'Disable auto-correct') do |_v|
+    options[:auto_correct] = false
   end
 end.parse!
 
@@ -25,7 +33,11 @@ validated = StrongVersions::Dependencies.new(dependencies).validate!(
   auto_correct: options[:auto_correct]
 )
 
-exec "#{$0}" if options[:auto_correct]
+if options[:auto_correct]
+  # Re-evaluate
+  args = original_args.map { |arg| Shellwords.escape(arg) }.join(' ')
+  exec "#{$PROGRAM_NAME} #{args} --no-auto-correct"
+end
 
 exit 0 if validated
 exit 1

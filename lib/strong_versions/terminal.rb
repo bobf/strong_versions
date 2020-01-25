@@ -7,7 +7,7 @@ module StrongVersions
     end
 
     def warn(string)
-      puts(color(string, :underline, :bright, :red))
+      puts(color(string, :bright, :red))
     end
 
     def gem_update(path, gem)
@@ -24,8 +24,8 @@ module StrongVersions
 
     def update_summary(updated)
       output = [
-        color(updated.to_s, :green),
-        color(' gem definitions updated.')
+        "#{updated} gem definitions ",
+        color('updated', :green)
       ].join
       puts("\n#{output}")
     end
@@ -87,13 +87,15 @@ module StrongVersions
 
     def suggestion(gem)
       suggested = '  ' + t('errors.suggested')
-      puts(
-        color(
-          "#{suggested} %{suggestion}",
-          :default,
-          suggestion: [gem.suggestion.to_s, :green]
-        )
-      )
+      puts(color("#{suggested}%{suggestion}", :default,
+                 suggestion: suggestion_definition(gem)))
+    end
+
+    def suggestion_definition(gem)
+      unidentified = gem.suggestion.to_s.empty?
+      return [t('no-suggestion'), :yellow] if unidentified
+
+      [gem.suggestion.to_s, :green]
     end
 
     def name_and_definition(gem)

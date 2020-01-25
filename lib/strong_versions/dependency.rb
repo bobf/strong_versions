@@ -10,9 +10,7 @@ module StrongVersions
       @errors = []
       @lockfile = lockfile || default_lockfile
 
-      versions.each do |operator, version|
-        validate_version(operator, version)
-      end
+      versions.each { |operator, version| validate_version(operator, version) }
     end
 
     def gemfile
@@ -29,33 +27,29 @@ module StrongVersions
 
     def suggested_definition
       guards = guard_versions.map { |op, version| "'#{op} #{version}'" }
-      combined = [suggestion, *guards].join(', ')
-      "gem '#{@name}', #{combined}"
+      "gem '#{@name}', #{[suggestion, *guards].join(', ')}"
     end
 
     def definition
-      versions.map { |operator, version| "'#{operator} #{version}'" }.join(', ')
+      versions.map do |operator, version|
+        next t('version_not_specified') if operator == '>=' && version == '0'
+
+        "'#{operator} #{version}'"
+      end.join(', ')
     end
 
     def updatable?
-      return false unless gemfile
-      return false if suggestion.missing?
-      return false if path_source?
-
-      true
+      gemfile && !suggestion.missing? && !path_source?
     end
 
     private
 
     def versions
-      @dependency.requirements_list.map do |requirement|
-        parse_version(requirement)
-      end
+      @dependency.requirements_list.map { |version| parse_version(version) }
     end
 
     def guard_versions
-      versions.reject { |op, _version| pessimistic?(op) }
-              .reject { |op, version| redundant?(op, version) }
+      versions.reject { |op, version| redundant?(op, version) }
     end
 
     def parse_version(requirement)
@@ -99,26 +93,22 @@ module StrongVersions
     def check_valid_version(version)
       return if valid_version?(version)
 
-      value = if version == '0'
-                I18n.t('strong_versions.version_not_specified')
-              else
-                version
-              end
+      value = version == '0' ? t('version_not_specified') : version
       @errors << { type: :version, value: value }
     end
 
     def redundant?(operator, version)
-      return false unless operator.start_with?('>')
+      return false unless operator.start_with?('>') || pessimistic?(operator)
 
       multiply_version(version) <= multiply_version(suggestion.version)
     end
 
     def multiply_version(version)
-      components = version.split('.')
       # Support extremely precise versions e.g. '1.2.3.4.5.6.7.8.9'
-      components += ['0'] * (10 - components.size)
+      components = version.split('.').map(&:to_i)
+      components += [0] * (10 - components.size)
       components.reverse.each_with_index.map do |component, index|
-        component.to_i * 10.pow(index + 1)
+        component * 10.pow(index + 1)
       end.sum
     end
 
@@ -145,13 +135,8 @@ module StrongVersions
       @dependency.source.is_a?(Bundler::Source::Path)
     end
 
-    def pessimistic_with_upper_bound?(operator)
-      any_pessimistic? && %w[< <=].include?(operator)
-    end
-
-    def any_pessimistic?
-      p versions
-      versions.any? { |operator, _version| pessimistic?(operator) }
+    def t(name)
+      I18n.t("strong_versions.#{name}")
     end
   end
 end
