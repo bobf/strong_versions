@@ -33,11 +33,12 @@ validated = StrongVersions::Dependencies.new(dependencies).validate!(
   auto_correct: options[:auto_correct]
 )
 
+exit 0 if validated
+
 if options[:auto_correct]
   # Re-evaluate
   args = original_args.map { |arg| Shellwords.escape(arg) }.join(' ')
   exec "#{$PROGRAM_NAME} #{args} --no-auto-correct"
 end
 
-exit 0 if validated
 exit 1
