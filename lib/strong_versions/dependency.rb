@@ -39,7 +39,7 @@ module StrongVersions
     end
 
     def updatable?
-      gemfile && !suggested_version.missing? && !path_source?
+      !valid? && gemfile && !suggested_version.missing? && !path_source?
     end
 
     private

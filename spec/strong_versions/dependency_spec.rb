@@ -38,6 +38,7 @@ RSpec.describe StrongVersions::Dependency do
   shared_examples 'valid requirements' do
     its(:valid?) { is_expected.to be true }
     its(:errors) { is_expected.to be_empty }
+    its(:updatable?) { is_expected.to be false }
   end
 
   shared_examples 'invalid requirements' do |errors:|
