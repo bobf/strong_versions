@@ -72,7 +72,7 @@ module StrongVersions
       return if path_source?
       return if any_valid?
 
-      check_pessimistic(operator)
+      check_pessimistic(operator) unless version.zero?
       check_valid_version(version)
     end
 
