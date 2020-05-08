@@ -87,7 +87,7 @@ module StrongVersions
     def gem_regex(subject, name)
       {
         gemfile: /^(\s*)gem\s+['"]#{name}['"].*$/,
-        gemspec: /^(\s*)spec.add_[a-z_]*_dependency\s+['"]#{name}['"].*$/
+        gemspec: /^(\s*)spec.add_[a-z_]*_?dependency\s+['"]#{name}['"].*$/
       }.fetch(subject)
     end
 
