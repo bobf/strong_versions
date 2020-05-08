@@ -28,7 +28,7 @@ When all gems in a `Gemfile` follow this convention it SHOULD always be safe to 
 Add the gem to your `Gemfile`
 
 ```ruby
-gem 'strong_versions', '~> 0.4.3'
+gem 'strong_versions', '~> 0.4.4'
 ```
 
 And rebuild your bundle:
@@ -39,7 +39,7 @@ $ bundle install
 
 Or install yourself:
 ```bash
-$ gem install strong_versions -v '0.4.3'
+$ gem install strong_versions -v '0.4.4'
 ```
 
 ## Usage
