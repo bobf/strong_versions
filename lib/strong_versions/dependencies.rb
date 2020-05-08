@@ -17,7 +17,7 @@ module StrongVersions
         return true
       end
 
-      return update_gemfile if auto_correct
+      return update_definitions if auto_correct
 
       raise_or_warn(options.fetch(:on_failure, 'raise'))
       summary
@@ -45,38 +45,50 @@ module StrongVersions
       @terminal.summary(@dependencies.size, @invalid_gems.size)
     end
 
-    def update_gemfile
-      updated = 0
-      @dependencies.each do |dependency|
-        next unless dependency.updatable?
-
-        updated += 1 if update_dependency(dependency)
-      end
-      @terminal.update_summary(updated)
+    def updatable_dependencies
+      @dependencies.select(&:updatable?)
     end
 
-    def update_dependency(dependency)
-      path = dependency.gemfile
+    def update_definitions
+      @terminal.update_summary(update(:gemfile) + update(:gemspec))
+    end
+
+    def update(subject)
+      updatable_dependencies.reduce(0) do |count, dependency|
+        next count unless dependency.updatable?
+
+        update_dependency(subject, dependency) ? count : count + 1
+      end
+    end
+
+    def update_dependency(subject, dependency)
+      path = dependency.public_send(subject)
+      return if path.nil?
+
       content = File.read(path)
-      update = replace_gem_definition(dependency, content)
+      update = replace_gem_definition(subject, dependency, content)
       return false if content == update
 
       File.write(path, update)
-      @terminal.gem_update(path, dependency)
+      @terminal.gem_update(path, dependency, subject)
       true
     end
 
-    def replace_gem_definition(dependency, content)
-      regex = gem_regex(dependency.name)
+    def replace_gem_definition(subject, dependency, content)
+      regex = gem_regex(subject, dependency.name)
       match = content.match(regex)
       return content unless match
 
       indent = match.captures.first
-      content.gsub(regex, "#{indent}#{dependency.suggested_definition}")
+      definition = dependency.suggested_definition(subject)
+      content.gsub(regex, "#{indent}#{definition}")
     end
 
-    def gem_regex(name)
-      /^(\s*)gem\s+['"]#{name}['"].*$/
+    def gem_regex(subject, name)
+      {
+        gemfile: /^(\s*)gem\s+['"]#{name}['"].*$/,
+        gemspec: /^(\s*)spec.add_[a-z_]*_dependency\s+['"]#{name}['"].*$/
+      }.fetch(subject)
     end
 
     def raise_or_warn(on_failure)

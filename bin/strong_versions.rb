@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 require 'optparse'
 
 require 'strong_versions'
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: strong_versions [options]"
+  opts.banner = 'Usage: strong_versions [options]'
 
-  opts.on("-a", "--auto-correct", "Auto-correct (use with caution)") do |v|
+  opts.on('-a', '--auto-correct', 'Auto-correct (use with caution)') do |_v|
     options[:auto_correct] = true
   end
 end.parse!
@@ -24,12 +26,13 @@ validated = StrongVersions::Dependencies.new(dependencies).validate!(
 )
 
 revalidated = false
-revalidated = StrongVersions::Dependencies.new(dependencies).validate!(
-  except: config.exceptions,
-  on_failure: 'warn',
-  auto_correct: false
-) if options[:auto_correct]
+if options[:auto_correct]
+  revalidated = StrongVersions::Dependencies.new(dependencies).validate!(
+    except: config.exceptions,
+    on_failure: 'warn',
+    auto_correct: false
+  )
+end
 
-exit 0 if validated or revalidated
+exit 0 if validated || revalidated
 exit 1
-

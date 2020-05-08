@@ -6,6 +6,12 @@ module StrongVersions
       development + runtime
     end
 
+    def gemspec_dependencies
+      Hash[gemspecs.compact.map do |gemspec|
+        [gemspec.loaded_from, dependencies]
+      end]
+    end
+
     private
 
     def development

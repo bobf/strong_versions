@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module StrongVersions
+  # rubocop:disable Metrics/ClassLength
   class Dependency
     attr_reader :name, :errors
 
@@ -17,6 +18,10 @@ module StrongVersions
       Pathname.new(@dependency.gemfile) if @dependency.respond_to?(:gemfile)
     end
 
+    def gemspec
+      Pathname.new(gemspec_path) unless gemspec_path.nil?
+    end
+
     def valid?
       @errors.empty?
     end
@@ -25,9 +30,10 @@ module StrongVersions
       GemVersion.new(GemVersion.new(lockfile_version).version_string)
     end
 
-    def suggested_definition
+    def suggested_definition(subject = :gemfile)
       guards = guard_versions.map { |op, version| "'#{op} #{version}'" }
-      "gem '#{@name}', #{[suggested_version.suggestion, *guards].join(', ')}"
+      constraints = [suggested_version.suggestion, *guards].join(', ')
+      send(:"suggested_#{subject}_definition", constraints)
     end
 
     def definition
@@ -39,10 +45,37 @@ module StrongVersions
     end
 
     def updatable?
-      !valid? && gemfile && !suggested_version.missing? && !path_source?
+      !valid? && !suggested_version.missing? && !path_source?
     end
 
     private
+
+    def gemspec_path
+      _spec, path = gemspec_dependency
+      path
+    end
+
+    def gemspec_spec
+      spec, _path = gemspec_dependency
+      spec
+    end
+
+    def gemspec_dependency
+      DependencyFinder.new.gemspec_dependencies.each do |path, specs|
+        specs.each do |spec|
+          return [spec, path] if spec.name == @dependency.name
+        end
+      end
+      nil
+    end
+
+    def suggested_gemspec_definition(constraints)
+      "spec.add_#{gemspec_spec.type}_dependency '#{@name}', #{constraints}"
+    end
+
+    def suggested_gemfile_definition(constraints)
+      "gem '#{@name}', #{constraints}"
+    end
 
     def versions
       @dependency.requirements_list.map { |version| parse_version(version) }
@@ -124,4 +157,5 @@ module StrongVersions
       I18n.t("strong_versions.#{name}")
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

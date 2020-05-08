@@ -22,17 +22,32 @@ RSpec.describe StrongVersions::Dependency do
   its(:name) { is_expected.to eql 'test_gem' }
 
   describe '#suggested_definition' do
-    subject(:suggested_definition) { dependency.suggested_definition }
+    subject(:suggested_definition) { dependency.suggested_definition(type) }
+
     let(:lockfile) { instance_double(Bundler::LockfileParser) }
     let(:spec) { instance_double(Bundler::LazySpecification) }
+    let(:gem) { double(type: :runtime, name: 'test_gem') }
+    let(:gemspec) do
+      double(loaded_from: '/somewhere', dependencies: [gem])
+    end
 
     before do
       allow(lockfile).to receive(:specs) { [spec] }
       allow(spec).to receive(:name) { 'test_gem' }
       allow(spec).to receive(:version) { '1.0.9' }
+      allow(Bundler).to receive(:load_gemspec) { gemspec }
     end
 
-    it { is_expected.to eql "gem 'test_gem', '~> 1.0'" }
+    context 'gemfile' do
+      let(:type) { :gemfile }
+      it { is_expected.to eql "gem 'test_gem', '~> 1.0'" }
+    end
+
+    context 'gemspec' do
+      let(:type) { :gemspec }
+      let(:expected) { "spec.add_runtime_dependency 'test_gem', '~> 1.0'" }
+      it { is_expected.to eql expected }
+    end
   end
 
   shared_examples 'valid requirements' do

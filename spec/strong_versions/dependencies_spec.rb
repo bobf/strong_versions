@@ -80,11 +80,11 @@ RSpec.describe StrongVersions::Dependencies do
       let(:options) { { auto_correct: true } }
       let(:gemfile) { raw_dependency.gemfile }
       let(:lockfile) { StrongVersions.root.join('spec/fixtures/Gemfile.lock') }
-      let(:fixture) do
+      let(:gemfile_fixture) do
         StrongVersions.root.join('spec/fixtures/Gemfile.example')
       end
 
-      before { File.write(gemfile, File.read(fixture)) }
+      before { File.write(gemfile, File.read(gemfile_fixture)) }
       before { allow(Bundler).to receive(:default_lockfile) { lockfile.to_s } }
 
       it 'auto-corrects gemfile' do

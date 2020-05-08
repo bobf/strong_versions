@@ -11,4 +11,8 @@ Style/FormatStringToken:
     - 'lib/strong_versions/terminal.rb'
 AllCops:
   Exclude:
-    - 'bin/**/*'
+    - 'bin/rake'
+    - 'bin/console'
+    - 'bin/rspec'
+    - 'bin/rubocop'
+    - 'bin/setup'

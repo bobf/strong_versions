@@ -10,14 +10,14 @@ module StrongVersions
       puts(color(string, :bright, :red))
     end
 
-    def gem_update(path, gem)
+    def gem_update(path, gem, subject)
       relpath = path.relative_path_from(Pathname.new(Dir.pwd))
       output = [
-        color("[#{relpath}] ", :cyan),
-        color(gem.suggested_definition, :green),
-        color(' (was: ', :default),
-        color(gem.definition, :red),
-        color(')', :default)
+        color('[', :cyan),
+        color(relpath.to_s, :green),
+        color('] ', :cyan),
+        color('updated: ', :default),
+        color(gem.suggested_definition(subject), :green)
       ].join
       puts(output)
     end

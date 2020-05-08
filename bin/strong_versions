@@ -13,11 +13,11 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = 'Usage: strong_versions [options]'
 
-  opts.on('-a', '--auto-correct', 'Auto-correct (use with caution)') do |_v|
+  opts.on('-a', '--auto-correct', 'Auto-correct (use with caution)') do
     options[:auto_correct] = true
   end
 
-  opts.on('--no-auto-correct', 'Disable auto-correct') do |_v|
+  opts.on('--no-auto-correct', 'Disable auto-correct') do
     options[:auto_correct] = false
   end
 end.parse!
