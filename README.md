@@ -1,11 +1,5 @@
 # StrongVersions
 
-```
-The right thing to guide us
-Is right here inside us
-               --Nickelback
-```
-
 # Overview
 
 _StrongVersions_ enforces a strict policy on your `Gemfile` requirements:
@@ -28,18 +22,13 @@ When all gems in a `Gemfile` follow this convention it SHOULD always be safe to 
 Add the gem to your `Gemfile`
 
 ```ruby
-gem 'strong_versions', '~> 0.4.4'
+gem 'strong_versions', '~> 0.4.5'
 ```
 
 And rebuild your bundle:
 
 ```bash
 $ bundle install
-```
-
-Or install yourself:
-```bash
-$ gem install strong_versions -v '0.4.4'
 ```
 
 ## Usage
@@ -54,7 +43,7 @@ The executable will output all non-passing gems and will return an exit code of 
 
 ![StrongVersions](doc/images/ci-pipeline.png)
 
-If you are feeling brave, auto-correct is available:
+Auto-correct is available with the `-a/--auto-correct` option:
 ```bash
 $ bundle exec strong_versions -a
 ```
@@ -69,6 +58,7 @@ ignore:
   - rails
 ```
 
+Gems in the ignore list will not be updated when using the `-a/--auto-correct` option.
 ## Contributing
 
 Fork and create a pull request.
