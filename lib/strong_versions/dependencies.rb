@@ -17,7 +17,7 @@ module StrongVersions
         return true
       end
 
-      return update_definitions if auto_correct
+      return update_definitions(options.fetch(:except, [])) if auto_correct
 
       raise_or_warn(options.fetch(:on_failure, 'raise'))
       summary
@@ -45,18 +45,17 @@ module StrongVersions
       @terminal.summary(@dependencies.size, @invalid_gems.size)
     end
 
-    def updatable_dependencies
-      @dependencies.select(&:updatable?)
+    def updatable_dependencies(except)
+      @dependencies.reject { |dependency| except.include?(dependency.name) }
+                   .select(&:updatable?)
     end
 
-    def update_definitions
-      @terminal.update_summary(update(:gemfile) + update(:gemspec))
+    def update_definitions(except)
+      @terminal.update_summary(update(:gemfile, except) + update(:gemspec, except))
     end
 
-    def update(subject)
-      updatable_dependencies.reduce(0) do |count, dependency|
-        next count unless dependency.updatable?
-
+    def update(subject, except)
+      updatable_dependencies(except).reduce(0) do |count, dependency|
         update_dependency(subject, dependency) ? count : count + 1
       end
     end
@@ -79,16 +78,14 @@ module StrongVersions
       match = content.match(regex)
       return content unless match
 
+      # For gemspec, indent includes the `spec.` or `s.` prefix.
       indent = match.captures.first
       definition = dependency.suggested_definition(subject)
       content.gsub(regex, "#{indent}#{definition}")
     end
 
     def gem_regex(subject, name)
-      {
-        gemfile: /^(\s*)gem\s+['"]#{name}['"].*$/,
-        gemspec: /^(\s*)spec.add_[a-z_]*_?dependency\s+['"]#{name}['"].*$/
-      }.fetch(subject)
+      Regexes.public_send(subject, name)
     end
 
     def raise_or_warn(on_failure)

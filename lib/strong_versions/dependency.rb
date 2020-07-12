@@ -14,6 +14,10 @@ module StrongVersions
       versions.each { |operator, version| validate_version(operator, version) }
     end
 
+    def to_s
+      "#<StrongVersions::Dependency name=#{@dependency.name}>"
+    end
+
     def gemfile
       Pathname.new(@dependency.gemfile) if @dependency.respond_to?(:gemfile)
     end
@@ -70,7 +74,7 @@ module StrongVersions
     end
 
     def suggested_gemspec_definition(constraints)
-      "spec.add_#{gemspec_spec.type}_dependency '#{@name}', #{constraints}"
+      "add_#{gemspec_spec.type}_dependency '#{@name}', #{constraints}"
     end
 
     def suggested_gemfile_definition(constraints)

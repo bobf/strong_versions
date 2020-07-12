@@ -28,14 +28,13 @@ Gem::Specification.new do |spec|
   # stop supporting Rails 4 we need to support I18n 0.x and 1.x. At some point,
   # I will do a release that is locked to '~> 1.0' and Rails 4 users can use
   # an older version of the gem but we are not quite there yet.
-  spec.add_dependency 'i18n', '>= 0.5.0'
+  spec.add_runtime_dependency 'i18n', '>= 0.5'
   spec.add_dependency 'paint', '~> 2.0'
 
-  spec.add_development_dependency 'betterp', '~> 0.1.2'
   spec.add_development_dependency 'bundler', '~> 1.16'
-  spec.add_development_dependency 'byebug', '~> 10.0'
+  spec.add_development_dependency 'devpack', '~> 0.1.1'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-its', '~> 1.2'
-  spec.add_development_dependency 'rubocop', '~> 0.60.0'
+  spec.add_development_dependency 'rubocop', '~> 0.87.1'
 end

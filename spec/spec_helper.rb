@@ -4,7 +4,8 @@ require 'bundler/setup'
 require 'rspec/its'
 
 require 'strong_versions'
-require 'betterp'
+
+require 'devpack'
 
 require 'pathname'
 require 'tempfile'

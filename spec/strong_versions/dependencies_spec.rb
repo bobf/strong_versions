@@ -68,14 +68,25 @@ RSpec.describe StrongVersions::Dependencies do
     end
 
     context 'auto-correct' do
+      let(:gem_dependencies) { [raw_dependency, ignored_gem] }
+      let(:gemfile_path) { Pathname.new(Tempfile.new.path) }
       let(:raw_dependency) do
         double(
           name: 'test_gem',
           requirements_list: requirements,
-          gemfile: Pathname.new(Tempfile.new.path),
+          gemfile: gemfile_path,
           source: nil
         )
       end
+      let(:ignored_gem) do
+        double(
+          name: 'ignored_gem',
+          requirements_list: ['~> 1'],
+          gemfile: gemfile_path,
+          source: nil
+        )
+      end
+
       let(:requirements) { ['~> 1'] }
       let(:options) { { auto_correct: true } }
       let(:gemfile) { raw_dependency.gemfile }
@@ -91,6 +102,12 @@ RSpec.describe StrongVersions::Dependencies do
         expect(File.read(gemfile)).to_not include "gem 'test_gem', '~> 1.3'"
         dependencies.validate!(options)
         expect(File.read(gemfile)).to include "gem 'test_gem', '~> 1.3'"
+      end
+
+      it 'does not auto-correct ignored gems' do
+        expect(File.read(gemfile)).to include "gem 'ignored_gem', '~> 1.6.1'"
+        dependencies.validate!(options.merge(except: ['ignored_gem']))
+        expect(File.read(gemfile)).to include "gem 'ignored_gem', '~> 1.6.1'"
       end
 
       context 'with necessary guard definition' do

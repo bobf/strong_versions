@@ -3,3 +3,4 @@ source 'https://rubygems.org'
 ruby '2.5.3'
 
 gem 'test_gem', '~> 1'
+gem 'ignored_gem', '~> 1.6.1'

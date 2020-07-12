@@ -13,6 +13,7 @@ require 'strong_versions/dependencies'
 require 'strong_versions/errors'
 require 'strong_versions/terminal'
 require 'strong_versions/gem_version'
+require 'strong_versions/regexes'
 require 'strong_versions/version'
 
 module StrongVersions

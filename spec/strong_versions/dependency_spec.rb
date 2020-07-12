@@ -45,7 +45,7 @@ RSpec.describe StrongVersions::Dependency do
 
     context 'gemspec' do
       let(:type) { :gemspec }
-      let(:expected) { "spec.add_runtime_dependency 'test_gem', '~> 1.0'" }
+      let(:expected) { "add_runtime_dependency 'test_gem', '~> 1.0'" }
       it { is_expected.to eql expected }
     end
   end
